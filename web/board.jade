@@ -4,10 +4,10 @@ link(rel="import" href="packages/polymer/polymer.html")
 polymer-element(name="panepond-board" on-click="{{handleClick}}")
   template
     .board.ti
-      template(repeat="{{col in columns}}")
+      template(repeat="{{col in columns | enumerate}}")
         .col
-          template(repeat="{{tile in col.tiles}}")
-            .tile(class="type{{tile.type}}") {{tile.symbols[tile.type]}}
+          template(repeat="{{tile in col.value.tiles | enumerate}}")
+            .tile(class="type{{tile.value.type}}" pos="{{col.index}},{{tile.index}}") {{tile.value.symbols[tile.value.type]}}
 
     .board.cu
       template(repeat="{{col in columns | enumerate}}")
