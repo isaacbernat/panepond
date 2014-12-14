@@ -41,7 +41,10 @@ class Board extends PolymerElement {
     Controls.down: KeyCode.K,
     Controls.left: KeyCode.J,
     Controls.right: KeyCode.L,
-    Controls.action: KeyCode.P,
+    Controls.action: KeyCode.Q,
+  };
+  Map rules = {
+    "min_matching_length": 3,
   };
   @observable  Map<String, num> cursor = toObservable({
     "x": 3,
@@ -69,27 +72,49 @@ class Board extends PolymerElement {
       cursor["x"] = min(width -cursor["width"], cursor["x"] +1);
     }
     else if (keyCode == controls[Controls.action]) {
-      String x1 = cursor["x"].toString();
-      String x2 = (cursor["x"] +1).toString();
-      String y = cursor["y"].toString();
-      swapTiles(x1, y, x2, y);
+      Map <String, num> t1 = {"x": cursor["x"], "y": cursor["y"]};
+      Map <String, num> t2 = {"x": cursor["x"] +1, "y": cursor["y"]};
+      swapTiles(t1, t2);
+      resolveMatches([t1, t2]);
     }
   }
 
-  void swapTiles(String x1, String y1, String x2, String y2) {
-    var tile1 =  this.shadowRoot.querySelector('.board.ti [pos="' + x1 + ',' + y1 + '"]');
-    var tile2 =  this.shadowRoot.querySelector('.board.ti [pos="' + x2 + ',' + y2 + '"]');
-    var aux1 = new DivElement(); //TODO: find a better way to deep-copy
-    aux1.appendHtml(tile1.innerHtml);
-    aux1.attributes = tile1.attributes;
-    aux1.attributes["pos"] = tile2.attributes["pos"]; //TODO: use XPath instead of this hack
-    var aux2 = new DivElement();
-    aux2.appendHtml(tile2.innerHtml);
-    aux2.attributes = tile2.attributes;
-    aux2.attributes["pos"] = tile1.attributes["pos"];
+  void resolveMatches(List <Map <String, num>> tiles) { //TODO: scan only needed elements
+    Map <String, bool> scanned = {};
+    var matchedTiles = [];
+    for(var t in tiles) {
+      print(t);
+      for(var axis in t.keys) {
+        if (scanned.containsKey(axis + t[axis].toString())) {
+          continue;
+        }
+        scanned[axis + t[axis].toString()] = true;
+        print(scanned);
+        String pos = (axis == "x")? '[pos^="' + t[axis].toString() + ',"]' : '[pos\$=",' + t[axis].toString() + ',"]';
+        var candidates = this.shadowRoot.querySelectorAll('.board.ti ' + pos);
+        for(var c in candidates){
+          print(c); //FIXME: resolve matches
+        }
+      }
+    }
+    return;
+  }
 
-    tile1.replaceWith(aux2);
-    tile2.replaceWith(aux1);
+
+  void swapTiles(Map <String, num> tile1, Map <String, num> tile2) {
+    var t1 =  this.shadowRoot.querySelector('.board.ti [pos="' + tile1["x"].toString() + ',' + tile1["y"].toString() + '"]');
+    var t2 =  this.shadowRoot.querySelector('.board.ti [pos="' + tile2["x"].toString() + ',' + tile2["y"].toString() + '"]');
+    var aux1 = new DivElement() //TODO: find a better way to deep-copy
+      ..appendHtml(t1.innerHtml)
+      ..attributes = t1.attributes
+      ..attributes["pos"] = t2.attributes["pos"]; //TODO: use XPath or :nth-child(n) instead of this hack?
+    var aux2 = new DivElement()
+      ..appendHtml(t2.innerHtml)
+      ..attributes = t2.attributes
+      ..attributes["pos"] = t1.attributes["pos"];
+
+    t1.replaceWith(aux2);
+    t2.replaceWith(aux1);
   }
 }
 

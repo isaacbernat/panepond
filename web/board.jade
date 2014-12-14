@@ -1,7 +1,7 @@
 doctype html
 link(rel="import" href="packages/polymer/polymer.html")
 
-polymer-element(name="panepond-board" on-click="{{handleClick}}")
+polymer-element(name="panepond-board")
   template
     .board.ti
       template(repeat="{{col in columns | enumerate}}")
