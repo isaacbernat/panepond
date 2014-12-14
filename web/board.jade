@@ -12,9 +12,9 @@ polymer-element(name="panepond-board" on-click="{{handleClick}}")
     .board.cu
       template(repeat="{{col in columns | enumerate}}")
         .col
-          template(repeat="{{tile in col.value.tiles | enumerate}}")
-            .tile(class="{{(col.index >= cursor['x'] && col.index < cursor['x'] + cursor['width']\
-                        && tile.index >= cursor['y'] && tile.index < cursor['y'] + cursor['height'])? \"cursor\" : ''}}") &nbsp;
+            template(repeat="{{tile in col.value.tiles | enumerate}}")
+              .tile(class="{{(col.index >= cursor['x'] && col.index < cursor['x'] + cursor['width']\
+                          && tile.index >= cursor['y'] && tile.index < cursor['y'] + cursor['height'])? \"cursor\" : ''}}") &nbsp;
 
     link(rel="stylesheet" href="board.css")
 script(type="application/dart" src="board.dart")

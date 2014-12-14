@@ -7,9 +7,16 @@ import "package:range/range.dart";
 
 main() {
   initPolymer().run(() {
+    // Code that doesn't need to wait.
+    Polymer.onReady.then((_) {
+      // Code that executes after elements have been upgraded.
+      var board1 = querySelector('.player1');
+      window.onKeyPress.listen( (e) {
+        board1.actOnKeyPress(e.keyCode);
+      });
+    });
   });
 }
-
 
 // enum Controls { //TODO use enums: experimental in dart 1.8.0
 //     up, down, left ,right, action
@@ -36,17 +43,32 @@ class Board extends PolymerElement {
     Controls.right: KeyCode.L,
     Controls.action: KeyCode.CTRL,
   };
-  @observable Map<String, num> cursor = {
+  @observable  Map<String, num> cursor = toObservable({
     "x": 3,
     "y": 3,
     "width": 2,
     "height": 1
-  };
+  });
   num width = 6; //x
   num height = 12; //y
   @observable List<Column> columns =
       range(0, 6).map((i) => new Column.prefilled(12, 3));
   Board.created() : super.created();
+
+  void actOnKeyPress(keyCode) {
+    if (!controls.containsValue(keyCode)){
+      return;
+    }
+    if (keyCode ==  controls[Controls.up]) {
+      cursor["y"] = max(0, --cursor["y"]);
+    } else if (keyCode == controls[Controls.down]) {
+      cursor["y"] = min(height -cursor["height"], ++cursor["y"]);
+    } else if (keyCode == controls[Controls.left]) {
+      cursor["x"] = max(0, --cursor["x"]);
+    } else if (keyCode == controls[Controls.right]) {
+      cursor["x"] = min(width -cursor["width"], ++cursor["x"]);
+    }
+  }
 }
 
 
