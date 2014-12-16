@@ -18,7 +18,7 @@ main() {
   });
 }
 
-// enum Controls { //TODO use enums: experimental in dart 1.8.0
+// enum Controls { //TODO use enums: new in dart 1.8.0. Got some issues :-/
 //     up, down, left ,right, action
 // }
 class Controls {
@@ -79,27 +79,48 @@ class Board extends PolymerElement {
     }
   }
 
-  void resolveMatches(List <Map <String, num>> tiles) { //TODO: scan only needed elements
+  void resolveMatches(List <Map <String, num>> tiles) { //FIXME: it doesn't always work
+    var matches = getMatches(tiles, rules);
+    clearMatches(matches);
+  }
+
+  List getMatches(List <Map <String, num>> tiles, rules) { //TODO: scan only needed elements
     Map <String, bool> scanned = {};
     var matchedTiles = [];
     for(var t in tiles) {
-      print(t);
       for(var axis in t.keys) {
         if (scanned.containsKey(axis + t[axis].toString())) {
-          continue;
+          continue; //optimisation, don't scan more than once the same line
         }
         scanned[axis + t[axis].toString()] = true;
-        print(scanned);
         String pos = (axis == "x")? '[pos^="' + t[axis].toString() + ',"]' : '[pos\$=",' + t[axis].toString() + ',"]';
         var candidates = this.shadowRoot.querySelectorAll('.board.ti ' + pos);
+        String prevClass = "";
+        var accum = [];
         for(var c in candidates){
-          print(c); //FIXME: resolve matches
+          if (c.className == prevClass) {
+            accum.add(c);
+          } else {
+            print(accum.length);
+            if (accum.length >= rules["min_matching_length"]) {
+              matchedTiles.addAll(accum);
+            }
+            accum = [c];
+            prevClass = c.className;
+          }
         }
       }
     }
-    return;
+    return matchedTiles;
   }
 
+  void clearMatches(List <Map <String, num>> tiles) {
+    for(var t in tiles) {
+      t.className = "tile type0";
+      t.innerHtml = "";
+    }
+    return;
+  }
 
   void swapTiles(Map <String, num> tile1, Map <String, num> tile2) {
     var t1 =  this.shadowRoot.querySelector('.board.ti [pos="' + tile1["x"].toString() + ',' + tile1["y"].toString() + '"]');
