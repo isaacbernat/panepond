@@ -79,7 +79,7 @@ class Board extends PolymerElement {
     }
   }
 
-  void resolveMatches(List <Map <String, num>> tiles) { //FIXME: it doesn't always work
+  void resolveMatches(List <Map <String, num>> tiles) {
     var matches = getMatches(tiles, rules);
     clearMatches(matches);
   }
@@ -93,7 +93,7 @@ class Board extends PolymerElement {
           continue; //optimisation, don't scan more than once the same line
         }
         scanned[axis + t[axis].toString()] = true;
-        String pos = (axis == "x")? '[pos^="' + t[axis].toString() + ',"]' : '[pos\$=",' + t[axis].toString() + ',"]';
+        String pos = (axis == "x")? '[pos^="' + t[axis].toString() + ',"]' : '[pos\$=",' + t[axis].toString() + '"]';
         var candidates = this.shadowRoot.querySelectorAll('.board.ti ' + pos);
         String prevClass = "";
         var accum = [];
@@ -101,13 +101,15 @@ class Board extends PolymerElement {
           if (c.className == prevClass) {
             accum.add(c);
           } else {
-            print(accum.length);
             if (accum.length >= rules["min_matching_length"]) {
               matchedTiles.addAll(accum);
             }
             accum = [c];
             prevClass = c.className;
           }
+        }
+        if (accum.length >= rules["min_matching_length"]) {
+          matchedTiles.addAll(accum);
         }
       }
     }
