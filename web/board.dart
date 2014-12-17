@@ -18,6 +18,7 @@ main() {
   });
 }
 
+
 // enum Controls { //TODO use enums: new in dart 1.8.0. Got some issues :-/
 //     up, down, left ,right, action
 // }
@@ -52,6 +53,7 @@ class Board extends PolymerElement {
     "width": 2,
     "height": 1
   });
+  @observable num totalScore = 0;
   num width = 6; //x
   num height = 12; //y
   @observable List<Column> columns =
@@ -81,12 +83,13 @@ class Board extends PolymerElement {
 
   void resolveMatches(List <Map <String, num>> tiles) {
     var matches = getMatches(tiles, rules);
+    totalScore += max(0, (matches.length - rules["min_matching_length"]) +1);
     clearMatches(matches);
   }
 
   List getMatches(List <Map <String, num>> tiles, rules) { //TODO: scan only needed elements
     Map <String, bool> scanned = {};
-    var matchedTiles = [];
+    var matchedTiles = new Set();
     for(var t in tiles) {
       for(var axis in t.keys) {
         if (scanned.containsKey(axis + t[axis].toString())) {
@@ -98,7 +101,7 @@ class Board extends PolymerElement {
         String prevClass = "";
         var accum = [];
         for(var c in candidates){
-          if (c.className == prevClass) {
+          if (c.attributes["state"] == "full" && c.className == prevClass) {
             accum.add(c);
           } else {
             if (accum.length >= rules["min_matching_length"]) {
@@ -120,6 +123,7 @@ class Board extends PolymerElement {
     for(var t in tiles) {
       t.className = "tile type0";
       t.innerHtml = "";
+      t.attributes["state"] = "empty";
     }
     return;
   }
@@ -140,6 +144,7 @@ class Board extends PolymerElement {
     t2.replaceWith(aux1);
   }
 }
+
 
 class Column {
   static var rand = new Random();

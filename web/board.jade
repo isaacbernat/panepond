@@ -3,11 +3,12 @@ link(rel="import" href="packages/polymer/polymer.html")
 
 polymer-element(name="panepond-board")
   template
+    p.score total {{totalScore}}
     .board.ti
       template(repeat="{{col in columns | enumerate}}")
         .col
           template(repeat="{{tile in col.value.tiles | enumerate}}")
-            .tile(class="type{{tile.value.type}}" pos="{{col.index}},{{tile.index}}") {{tile.value.symbols[tile.value.type]}}
+            .tile(class="type{{tile.value.type}}" pos="{{col.index}},{{tile.index}}" state="{{(tile.value.type == '0')?'empty':'full'}}") {{tile.value.symbols[tile.value.type]}}
 
     .board.cu
       template(repeat="{{col in columns | enumerate}}")
