@@ -83,7 +83,9 @@ class Board extends PolymerElement {
 
   void resolveMatches(List <Map <String, num>> tiles) {
     var matches = getMatches(tiles, rules);
-    totalScore += max(0, (matches.length - rules["min_matching_length"]) +1);
+    num comboScore = max(0, (matches.length - rules["min_matching_length"]) +1);
+    totalScore += comboScore;
+    showEffects(matches, comboScore);
     clearMatches(matches);
   }
 
@@ -117,6 +119,28 @@ class Board extends PolymerElement {
       }
     }
     return matchedTiles;
+  }
+
+  void showEffects(List <Map <String, num>> tiles, comboScore) {
+    if(comboScore == 0){
+      return;
+    }
+    num maxX = 0, minX = 9999, maxY = 0, minY = 9999; //TODO: non-magic numbers
+    var positions = tiles.map((t) => t.attributes["pos"]);
+    for(var p in positions){
+      var coordinates = p.split(",");
+      maxX = max(maxX, int.parse(coordinates[0]));
+      minX = min(minX, int.parse(coordinates[0]));
+      maxY = max(maxY, int.parse(coordinates[1]));
+      minY = min(minY, int.parse(coordinates[1]));
+    }
+    if ((maxY == minY) || (maxX == minX)) { //TODO: better "centering" algorithm
+      minX = ((minX+maxX)/2).floor();
+      minY = ((minY+maxY)/2).floor();
+    }
+    String pos = '[pos="' + minX.toString() + "," + minY.toString() + '"]';
+    this.shadowRoot.querySelector('.board.ef ' + pos).innerHtml = '+' +comboScore.toString();
+    return;
   }
 
   void clearMatches(List <Map <String, num>> tiles) {
@@ -160,6 +184,7 @@ class Column {
 
 class Tile {
   num type;
+  String effect = " ";
   Map<int, String> symbols = {
     0: " ",
     1: "♠",

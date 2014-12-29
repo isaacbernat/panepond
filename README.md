@@ -2,7 +2,7 @@ panepond: Panel de Pon with D(art)
 ==================================
 Features
 --------
-ATM this is very WIP. Just displaying a grid and a moveable cursor.
+ATM this is very WIP. Just displaying a grid and a moveable cursor where you can make combos and get points.
 
 Run this
 --------
