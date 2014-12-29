@@ -85,7 +85,7 @@ class Board extends PolymerElement {
     var matches = getMatches(tiles, rules);
     num comboScore = max(0, (matches.length - rules["min_matching_length"]) +1);
     totalScore += comboScore;
-    showEffects(matches, comboScore);
+    showEffects(matches, comboScore).then((tile) => clearEffects(tile));
     clearMatches(matches);
   }
 
@@ -121,9 +121,15 @@ class Board extends PolymerElement {
     return matchedTiles;
   }
 
-  void showEffects(List <Map <String, num>> tiles, comboScore) {
+  void clearEffects(Node effectTile) {
+    if(effectTile != null){
+      effectTile.innerHtml = "";
+    }
+  }
+
+  Future showEffects(List <Map <String, num>> tiles, comboScore) {
     if(comboScore == 0){
-      return;
+      return new Future(() => null);
     }
     num maxX = 0, minX = 9999, maxY = 0, minY = 9999; //TODO: non-magic numbers
     var positions = tiles.map((t) => t.attributes["pos"]);
@@ -139,8 +145,9 @@ class Board extends PolymerElement {
       minY = ((minY+maxY)/2).floor();
     }
     String pos = '[pos="' + minX.toString() + "," + minY.toString() + '"]';
-    this.shadowRoot.querySelector('.board.ef ' + pos).innerHtml = '+' +comboScore.toString();
-    return;
+    Node effectTile = this.shadowRoot.querySelector('.board.ef ' + pos);
+    effectTile.innerHtml = '+' +comboScore.toString();
+    return new Future.delayed(const Duration(seconds: 1), () => effectTile);
   }
 
   void clearMatches(List <Map <String, num>> tiles) {
