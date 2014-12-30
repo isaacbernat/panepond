@@ -47,7 +47,8 @@ class Board extends PolymerElement {
   Map rules = {
     "min_matching_length": 3,
   };
-  @observable  Map<String, num> cursor = toObservable({
+  static var rand = new Random();
+  @observable Map<String, num> cursor = toObservable({
     "x": 3,
     "y": 3,
     "width": 2,
@@ -56,8 +57,8 @@ class Board extends PolymerElement {
   @observable num totalScore = 0;
   num width = 6; //x
   num height = 12; //y
-  @observable List<Column> columns =
-      range(0, 6).map((i) => new Column.prefilled(12, 3));
+  @observable List<List<Tile>> columns = toObservable(range(0, 6).map((i) => range(0, 12).map((j) => j < 3 ? new Tile(0, i, j) : new Tile(rand.nextInt(6) + 1, i, j))));
+  @observable List<List<String>> columnEffects = toObservable(range(0, 6).map((j) => range(0, 12).map((i) => " ")));
   Board.created() : super.created();
 
   void actOnKeyPress(keyCode) {
@@ -74,11 +75,19 @@ class Board extends PolymerElement {
       cursor["x"] = min(width -cursor["width"], cursor["x"] +1);
     }
     else if (keyCode == controls[Controls.action]) {
-      Map <String, num> t1 = {"x": cursor["x"], "y": cursor["y"]};
-      Map <String, num> t2 = {"x": cursor["x"] +1, "y": cursor["y"]};
-      swapTiles(t1, t2);
-      resolveMatches([t1, t2]);
+      Map <String, num> pos1, pos2;
+      pos1 = {"x": cursor["x"], "y": cursor["y"]};
+      pos2 = {"x": cursor["x"]+1, "y": cursor["y"]};
+      swapTiles(pos1, pos2);
+      resolveMatches([pos1, pos2]);
     }
+  }
+
+  void swapTiles(Map <String, num> pos1, Map <String, num> pos2) {
+    num type1 = this.columns[pos1["x"]][pos1["y"]].type;
+    num type2 = this.columns[pos2["x"]][pos2["y"]].type;
+    this.columns[pos2["x"]][pos2["y"]].type = type1;
+    this.columns[pos1["x"]][pos1["y"]].type = type2;
   }
 
   void resolveMatches(List <Map <String, num>> tiles) {
@@ -98,99 +107,69 @@ class Board extends PolymerElement {
           continue; //optimisation, don't scan more than once the same line
         }
         scanned[axis + t[axis].toString()] = true;
-        String pos = (axis == "x")? '[pos^="' + t[axis].toString() + ',"]' : '[pos\$=",' + t[axis].toString() + '"]';
-        var candidates = this.shadowRoot.querySelectorAll('.board.ti ' + pos);
-        String prevClass = "";
-        var accum = [];
+        List <Tile> candidates;
+        if (axis == "x") {
+          candidates = this.columns[t["x"]];
+        } else /* if (axis == "y") */{
+          candidates = this.columns.map((col) => col[t["y"]]);
+        }
+        num prevType = -1;
+        List <Map <String, num>> accumTiles = [];
         for(var c in candidates){
-          if (c.attributes["state"] == "full" && c.className == prevClass) {
-            accum.add(c);
+          if (c.type == prevType && c.type > 0) { //TODO: use states
+            accumTiles.add({"x": c.x, "y": c.y});
           } else {
-            if (accum.length >= rules["min_matching_length"]) {
-              matchedTiles.addAll(accum);
+            if (accumTiles.length >= rules["min_matching_length"]) {
+              matchedTiles.addAll(accumTiles);
             }
-            accum = [c];
-            prevClass = c.className;
+            accumTiles = [{"x": c.x, "y": c.y}];
+            prevType = c.type;
           }
         }
-        if (accum.length >= rules["min_matching_length"]) {
-          matchedTiles.addAll(accum);
+        if (accumTiles.length >= rules["min_matching_length"]) {
+          matchedTiles.addAll(accumTiles);
         }
       }
     }
     return matchedTiles;
   }
 
-  void clearEffects(Node effectTile) {
-    if(effectTile != null){
-      effectTile.innerHtml = "";
+  void clearMatches(List <Map <String, num>> tiles) {
+    for(var t in tiles) {
+      this.columns[t["x"]][t["y"]].type = 0;
     }
   }
 
   Future showEffects(List <Map <String, num>> tiles, comboScore) {
     if(comboScore == 0){
-      return new Future(() => null);
+      return new Future(() => [-1, -1]);
     }
     num maxX = 0, minX = 9999, maxY = 0, minY = 9999; //TODO: non-magic numbers
-    var positions = tiles.map((t) => t.attributes["pos"]);
-    for(var p in positions){
-      var coordinates = p.split(",");
-      maxX = max(maxX, int.parse(coordinates[0]));
-      minX = min(minX, int.parse(coordinates[0]));
-      maxY = max(maxY, int.parse(coordinates[1]));
-      minY = min(minY, int.parse(coordinates[1]));
+    for(var t in tiles){
+      maxX = max(maxX, t["x"]);
+      minX = min(minX, t["x"]);
+      maxY = max(maxY, t["y"]);
+      minY = min(minY, t["y"]);
     }
     if ((maxY == minY) || (maxX == minX)) { //TODO: better "centering" algorithm
       minX = ((minX+maxX)/2).floor();
       minY = ((minY+maxY)/2).floor();
     }
-    String pos = '[pos="' + minX.toString() + "," + minY.toString() + '"]';
-    Node effectTile = this.shadowRoot.querySelector('.board.ef ' + pos);
-    effectTile.innerHtml = '+' +comboScore.toString();
-    return new Future.delayed(const Duration(seconds: 1), () => effectTile);
+    this.columnEffects[minX][minY] = '+' + comboScore.toString();
+    return new Future.delayed(const Duration(seconds: 1), () => [minX, minY]);
   }
 
-  void clearMatches(List <Map <String, num>> tiles) {
-    for(var t in tiles) {
-      t.className = "tile type0";
-      t.innerHtml = "";
-      t.attributes["state"] = "empty";
+  void clearEffects(List<num> coordinates) {
+    if (coordinates[0] > -1) {
+      this.columnEffects[coordinates[0]][coordinates[1]] = " ";
     }
-    return;
-  }
-
-  void swapTiles(Map <String, num> tile1, Map <String, num> tile2) {
-    var t1 =  this.shadowRoot.querySelector('.board.ti [pos="' + tile1["x"].toString() + ',' + tile1["y"].toString() + '"]');
-    var t2 =  this.shadowRoot.querySelector('.board.ti [pos="' + tile2["x"].toString() + ',' + tile2["y"].toString() + '"]');
-    var aux1 = new DivElement() //TODO: find a better way to deep-copy
-      ..appendHtml(t1.innerHtml)
-      ..attributes = t1.attributes
-      ..attributes["pos"] = t2.attributes["pos"]; //TODO: use XPath or :nth-child(n) instead of this hack?
-    var aux2 = new DivElement()
-      ..appendHtml(t2.innerHtml)
-      ..attributes = t2.attributes
-      ..attributes["pos"] = t1.attributes["pos"];
-
-    t1.replaceWith(aux2);
-    t2.replaceWith(aux1);
   }
 }
 
-
-class Column {
-  static var rand = new Random();
-  List<Tile> tiles;
-  Column.prefilled(num total, num top_empty) {
-    this.tiles = range(0, total).map(
-            (i) => i < top_empty ? new Tile("0") : new Tile(rand.nextInt(6) + 1));}
-  Column(List tiles) {
-    this.tiles = tiles.map((t) => new Tile(t));
-  }
-}
-
-
-class Tile {
-  num type;
+class Tile extends Observable {
+  @observable num type;
+  @observable num x;
+  @observable num y;
   String effect = " ";
   Map<int, String> symbols = {
     0: " ",
@@ -202,5 +181,5 @@ class Tile {
     6: "■"
   };
 
-  Tile(letter) : type = letter;
+  Tile(number, x, y) : type = number, x = x, y = y;
 }

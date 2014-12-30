@@ -7,20 +7,20 @@ polymer-element(name="panepond-board")
     .board.ti
       template(repeat="{{col in columns | enumerate}}")
         .col
-          template(repeat="{{tile in col.value.tiles | enumerate}}")
-            .tile(class="type{{tile.value.type}}" pos="{{col.index}},{{tile.index}}" state="{{(tile.value.type == '0')?'empty':'full'}}") {{tile.value.symbols[tile.value.type]}}
+          template(repeat="{{tile in col.value | enumerate}}")
+            .tile(class="type{{tile.value.type}}" pos="{{col.index}},{{tile.index}}") {{tile.value.symbols[tile.value.type]}}
 
     .board.cu
       template(repeat="{{col in columns | enumerate}}")
         .col
-            template(repeat="{{tile in col.value.tiles | enumerate}}")
+            template(repeat="{{tile in col.value | enumerate}}")
               .tile(class="{{(col.index >= cursor['x'] && col.index < cursor['x'] + cursor['width']\
                           && tile.index >= cursor['y'] && tile.index < cursor['y'] + cursor['height'])? \"cursor\" : ''}}") &nbsp;
     .board.ef
-      template(repeat="{{col in columns | enumerate}}")
+      template(repeat="{{col in columnEffects | enumerate}}")
         .col
-          template(repeat="{{tile in col.value.tiles | enumerate}}")
-            .tile(pos="{{col.index}},{{tile.index}}") {{tile.value.effect}}
+          template(repeat="{{tile in col.value | enumerate}}")
+            .tile(pos="{{col.index}},{{tile.index}}") {{tile.value}}
 
     link(rel="stylesheet" href="board.css")
 script(type="application/dart" src="board.dart")
