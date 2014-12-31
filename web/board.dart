@@ -95,7 +95,7 @@ class Board extends PolymerElement {
     num comboScore = max(0, (matches.length - rules["min_matching_length"]) +1);
     totalScore += comboScore;
     showEffects(matches, comboScore).then((tile) => clearEffects(tile));
-    clearMatches(matches);
+    clearMatches(matches).then((columns) => gravity(columns));
   }
 
   List getMatches(List <Map <String, num>> tiles, rules) { //TODO: scan only needed elements
@@ -134,10 +134,34 @@ class Board extends PolymerElement {
     return matchedTiles;
   }
 
-  void clearMatches(List <Map <String, num>> tiles) {
+  Future clearMatches(List <Map <String, num>> tiles) {
+    List <num> columns = new Set();;
     for(var t in tiles) {
       this.columns[t["x"]][t["y"]].type = 0;
+      columns.add(t["x"]);
     }
+    return new Future.delayed(const Duration(seconds: 1), () => columns);
+  }
+
+  void gravity(List <num> columns) {
+    num len = this.columns[0].length;
+    for(var c in columns) {
+      for (var i = len -1; i > 0; i--) {
+        if(this.columns[c][i].type == 0) {
+          num highestType = 0;
+          for (var j = i; j > 1; j--) {
+            highestType = max(highestType, this.columns[c][j-1].type);
+            this.columns[c][j].type = this.columns[c][j-1].type;
+          }
+          if(highestType > 0) {
+            this.columns[c][0].type = 0;
+            gravity([c]); //TODO: non-instant gravity?
+          }
+          break;
+        }
+      }
+    }
+    return;
   }
 
   Future showEffects(List <Map <String, num>> tiles, comboScore) {
