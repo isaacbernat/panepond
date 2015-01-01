@@ -11,8 +11,11 @@ main() {
     Polymer.onReady.then((_) {
       // Code that executes after elements have been upgraded.
       var board1 = querySelector('.player1');
-      window.onKeyPress.listen( (e) {
-        board1.actOnKeyPress(e.keyCode);
+      window.onKeyDown.listen( (e) {
+        board1.actOnKeyDown(e.keyCode);
+      });
+      window.onKeyUp.listen( (e) {
+        board1.moveFreeze = -1; //FIXME: WIP multiple pressed keys
       });
     });
   });
@@ -35,6 +38,17 @@ class Controls {
 }
 
 
+class States {
+  static const still = const Controls._(0);
+  static const fall = const Controls._(1);
+  static const swap = const Controls._(2);
+
+  static get values => [still, fall, swap];
+  final int value;
+  const States._(this.value);
+}
+
+
 @CustomTag('panepond-board')
 class Board extends PolymerElement {
   Map<num, num> controls = { // all caps!
@@ -54,6 +68,8 @@ class Board extends PolymerElement {
     "width": 2,
     "height": 1
   });
+  bool cursorLock = false;
+  num moveFreeze = -1;
   @observable num totalScore = 0;
   num width = 6; //x
   num height = 12; //y
@@ -61,34 +77,63 @@ class Board extends PolymerElement {
   @observable List<List<String>> columnEffects = toObservable(range(0, 6).map((j) => range(0, 12).map((i) => " ")));
   Board.created() : super.created();
 
-  void actOnKeyPress(keyCode) {
-    if (!controls.containsValue(keyCode)){
+  void actOnKeyDown(keyCode) {
+    if (cursorLock || !controls.containsValue(keyCode)){
       return;
     }
-    if (keyCode ==  controls[Controls.up]) {
-      cursor["y"] = max(0, cursor["y"] -1);
+    if (keyCode == controls[Controls.up]) {
+      moveCursor("y", max(0, cursor["y"] -1), Controls.up);
     } else if (keyCode == controls[Controls.down]) {
-      cursor["y"] = min(height -cursor["height"], cursor["y"] +1);
+      moveCursor("y", min(height -cursor["height"], cursor["y"] +1), Controls.down);
     } else if (keyCode == controls[Controls.left]) {
-      cursor["x"] = max(0, cursor["x"] -1);
+      moveCursor("x", max(0, cursor["x"] -1), Controls.left);
     } else if (keyCode == controls[Controls.right]) {
-      cursor["x"] = min(width -cursor["width"], cursor["x"] +1);
+      moveCursor("x", min(width -cursor["width"], cursor["x"] +1), Controls.right);
     }
     else if (keyCode == controls[Controls.action]) {
       Map <String, num> pos1, pos2;
       pos1 = {"x": cursor["x"], "y": cursor["y"]};
       pos2 = {"x": cursor["x"]+1, "y": cursor["y"]};
-      swapTiles(pos1, pos2).then((columns) => gravity(columns));
-      resolveMatches([pos1, pos2]);
+      swapTiles(pos1, pos2);
     }
   }
 
-  Future swapTiles(Map <String, num> pos1, Map <String, num> pos2) {
-    num type1 = this.columns[pos1["x"]][pos1["y"]].type;
-    num type2 = this.columns[pos2["x"]][pos2["y"]].type;
-    this.columns[pos2["x"]][pos2["y"]].type = type1;
-    this.columns[pos1["x"]][pos1["y"]].type = type2;
-    return new Future.delayed(const Duration(seconds: 1), () => [pos1["x"], pos2["x"]]);
+  void moveCursor(String axis, num value, num move) {
+    if(moveFreeze == move) {
+      return;
+    }
+    moveFreeze = move;
+    cursor[axis] = value;
+    return;
+  }
+
+  void setCursorLock(bool state) {
+    cursorLock = state;
+  }
+
+  void swapTiles(Map <String, num> pos1, Map <String, num> pos2) {
+    Tile t1 = this.columns[pos1["x"]][pos1["y"]];
+    Tile t2 = this.columns[pos2["x"]][pos2["y"]];
+    if (t1.state != States.still && t2.state != States.still){
+      return;
+    }
+    num tmpType = t1.type;
+    t1.type = t2.type;
+    t1.state = States.swap;
+    t2.type = tmpType;
+    t2.state = States.swap;
+    new Future.delayed(const Duration(seconds: 1), () => [pos1, pos2])
+      .then((positions) => gravity(positions))
+      .then((positions) => resolveMatches(positions));
+    new Future.delayed(const Duration(seconds: 1), () => [t1, t2])
+      .then((tiles) => changeState(tiles, States.still));
+    return;
+  }
+
+  void changeState(List <Tile> tiles, num state) {
+    for(var t in tiles) {
+      t.state = state;
+    }
   }
 
   void resolveMatches(List <Map <String, num>> tiles) {
@@ -136,16 +181,15 @@ class Board extends PolymerElement {
   }
 
   Future clearMatches(List <Map <String, num>> tiles) {
-    List <num> columns = new Set();;
     for(var t in tiles) {
       this.columns[t["x"]][t["y"]].type = 0;
-      columns.add(t["x"]);
     }
-    return new Future.delayed(const Duration(seconds: 1), () => columns);
+    return new Future.delayed(const Duration(seconds: 1), () => tiles);
   }
 
-  void gravity(List <num> columns) {
-    num len = this.columns[0].length;
+  List <Map <String, num>> gravity(List <Map <String, num>> positions) {
+    List <num> columns = positions.map((pos) => pos["x"]);
+    num len = this.columns[0].length; //TODO: use a constant
     for(var c in columns) {
       for (var i = len -1; i > 0; i--) {
         if(this.columns[c][i].type == 0) {
@@ -156,13 +200,13 @@ class Board extends PolymerElement {
           }
           if(highestType > 0) {
             this.columns[c][0].type = 0;
-            gravity([c]); //TODO: non-instant gravity?
+            gravity([{"x": c}]); //TODO: non-instant gravity?
           }
           break;
         }
       }
     }
-    return;
+    return positions;
   }
 
   Future showEffects(List <Map <String, num>> tiles, comboScore) {
@@ -196,6 +240,7 @@ class Tile extends Observable {
   @observable num x;
   @observable num y;
   String effect = " ";
+  num state = States.still;
   Map<int, String> symbols = {
     0: " ",
     1: "♠",
