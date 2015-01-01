@@ -78,16 +78,17 @@ class Board extends PolymerElement {
       Map <String, num> pos1, pos2;
       pos1 = {"x": cursor["x"], "y": cursor["y"]};
       pos2 = {"x": cursor["x"]+1, "y": cursor["y"]};
-      swapTiles(pos1, pos2);
+      swapTiles(pos1, pos2).then((columns) => gravity(columns));
       resolveMatches([pos1, pos2]);
     }
   }
 
-  void swapTiles(Map <String, num> pos1, Map <String, num> pos2) {
+  Future swapTiles(Map <String, num> pos1, Map <String, num> pos2) {
     num type1 = this.columns[pos1["x"]][pos1["y"]].type;
     num type2 = this.columns[pos2["x"]][pos2["y"]].type;
     this.columns[pos2["x"]][pos2["y"]].type = type1;
     this.columns[pos1["x"]][pos1["y"]].type = type2;
+    return new Future.delayed(const Duration(seconds: 1), () => [pos1["x"], pos2["x"]]);
   }
 
   void resolveMatches(List <Map <String, num>> tiles) {
