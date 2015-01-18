@@ -17,6 +17,7 @@ main() {
       window.onKeyUp.listen( (e) {
         board1.moveFreeze = -1; //FIXME: WIP multiple pressed keys
       });
+      board1.init();
     });
   });
 }
@@ -73,14 +74,19 @@ class Board extends PolymerElement {
   @observable num totalScore = 0;
   num width = 6; //x
   num height = 12; //y
-  @observable List<List<Tile>> columns = toObservable(range(0, 6).map((i) => range(0, 12).map((j) => j < 3 ? new Tile(0, i, j) : new Tile(rand.nextInt(6) + 1, i, j))));
-  @observable List<List<String>> columnEffects = toObservable(range(0, 6).map((j) => range(0, 12).map((i) => " ")));
+  @observable List<List<Tile>> columns;
+  @observable List<List<String>> columnEffects;
   Board.created() : super.created();
 
+  void init() {
+    columns = toObservable(range(0, width).map((i) => range(0, height).map((j) => j < 3 ? new Tile(0, i, j) : new Tile(rand.nextInt(6) + 1, i, j))));
+    columnEffects = toObservable(range(0, 6).map((j) => range(0, 12).map((i) => " ")));
+    resolveMatchesInit();
+  }
+
   void actOnKeyDown(keyCode) {
-    if (cursorLock || !controls.containsValue(keyCode)){
-      return;
-    }
+    if (cursorLock || !controls.containsValue(keyCode)) return;
+
     if (keyCode == controls[Controls.up]) {
       moveCursor("y", max(0, cursor["y"] -1), Controls.up);
     } else if (keyCode == controls[Controls.down]) {
@@ -99,9 +105,8 @@ class Board extends PolymerElement {
   }
 
   void moveCursor(String axis, num value, num move) {
-    if(moveFreeze == move) {
-      return;
-    }
+    if(moveFreeze == move) return;
+
     moveFreeze = move;
     cursor[axis] = value;
     return;
@@ -114,9 +119,8 @@ class Board extends PolymerElement {
   void swapTiles(Map <String, num> pos1, Map <String, num> pos2) {
     Tile t1 = this.columns[pos1["x"]][pos1["y"]];
     Tile t2 = this.columns[pos2["x"]][pos2["y"]];
-    if (t1.state != States.still && t2.state != States.still){
-      return;
-    }
+    if (t1.state != States.still && t2.state != States.still) return;
+
     num tmpType = t1.type;
     t1.type = t2.type;
     t1.state = States.swap;
@@ -134,6 +138,18 @@ class Board extends PolymerElement {
     for(var t in tiles) {
       t.state = state;
     }
+  }
+
+  void resolveMatchesInit() { //FIXME: this is very naive -- but it is only run at init
+    List <Map <String, num>> tiles = range(0, width*height).map((i) => {"x": (i/height).floor(), "y": i%height});
+    var matches = getMatches(tiles, rules);
+    if (matches.length == 0) return;
+
+    for(var m in matches) {
+      this.columns[m["x"]][m["y"]].type = 0;
+    }
+    gravity(matches);
+    resolveMatchesInit();
   }
 
   void resolveMatches(List <Map <String, num>> tiles) {
