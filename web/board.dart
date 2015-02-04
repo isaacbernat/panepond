@@ -62,7 +62,7 @@ class Board extends PolymerElement {
   Map rules = {
     "min_matching_length": 3,
   };
-  static var rand = new Random();
+  static var rand = new Random(); //Random(1234); //a fixed seed for debugging purposes
   @observable Map<String, num> cursor = toObservable({
     "x": 3,
     "y": 3,
@@ -154,10 +154,14 @@ class Board extends PolymerElement {
 
   void resolveMatches(List <Map <String, num>> tiles) {
     var matches = getMatches(tiles, rules);
+    if (matches.length == 0) return;
+
     num comboScore = max(0, (matches.length - rules["min_matching_length"]) +1);
     totalScore += comboScore;
     showEffects(matches, comboScore).then((tile) => clearEffects(tile));
-    clearMatches(matches).then((columns) => gravity(columns));
+    clearMatches(matches)
+      .then((positions) => gravity(positions))
+      .then((positions) => resolveMatches(positions));
   }
 
   List getMatches(List <Map <String, num>> tiles, rules) { //TODO: scan only needed elements
@@ -206,6 +210,7 @@ class Board extends PolymerElement {
   List <Map <String, num>> gravity(List <Map <String, num>> positions) {
     List <num> columns = positions.map((pos) => pos["x"]);
     num len = this.columns[0].length; //TODO: use a constant
+    List <Map <String, num>> gravityPositions = [];
     for(var c in columns) {
       for (var i = len -1; i > 0; i--) {
         if(this.columns[c][i].type == 0) {
@@ -217,12 +222,13 @@ class Board extends PolymerElement {
           if(highestType > 0) {
             this.columns[c][0].type = 0;
             gravity([{"x": c}]); //TODO: non-instant gravity?
+            gravityPositions.add({"x": c, "y": i});
           }
           break;
         }
       }
     }
-    return positions;
+    return positions..addAll(gravityPositions);
   }
 
   Future showEffects(List <Map <String, num>> tiles, comboScore) {
