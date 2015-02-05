@@ -128,7 +128,7 @@ class Board extends PolymerElement {
     t2.state = States.swap;
     new Future.delayed(const Duration(seconds: 1), () => [pos1, pos2])
       .then((positions) => gravity(positions))
-      .then((positions) => resolveMatches(positions));
+      .then((positions) => resolveMatches(positions, 1));
     new Future.delayed(const Duration(seconds: 1), () => [t1, t2])
       .then((tiles) => changeState(tiles, States.still));
     return;
@@ -152,16 +152,17 @@ class Board extends PolymerElement {
     resolveMatchesInit();
   }
 
-  void resolveMatches(List <Map <String, num>> tiles) {
+  void resolveMatches(List <Map <String, num>> tiles, num multiplier) {
+    //TODO: different colours -> different combos, even if they result from the same instant
     var matches = getMatches(tiles, rules);
     if (matches.length == 0) return;
 
     num comboScore = max(0, (matches.length - rules["min_matching_length"]) +1);
-    totalScore += comboScore;
-    showEffects(matches, comboScore).then((tile) => clearEffects(tile));
+    totalScore += comboScore * multiplier;
+    showEffects(matches, comboScore, multiplier).then((tile) => clearEffects(tile));
     clearMatches(matches)
       .then((positions) => gravity(positions))
-      .then((positions) => resolveMatches(positions));
+      .then((positions) => resolveMatches(positions, ++multiplier));
   }
 
   List getMatches(List <Map <String, num>> tiles, rules) { //TODO: scan only needed elements
@@ -231,8 +232,8 @@ class Board extends PolymerElement {
     return positions..addAll(gravityPositions);
   }
 
-  Future showEffects(List <Map <String, num>> tiles, comboScore) {
-    if(comboScore == 0){
+  Future showEffects(List <Map <String, num>> tiles, num comboScore, num multiplier) {
+    if(comboScore == 0 && multiplier == 1){
       return new Future(() => [-1, -1]);
     }
     num maxX = 0, minX = 9999, maxY = 0, minY = 9999; //TODO: non-magic numbers
@@ -246,7 +247,13 @@ class Board extends PolymerElement {
       minX = ((minX+maxX)/2).floor();
       minY = ((minY+maxY)/2).floor();
     }
-    this.columnEffects[minX][minY] = '+' + comboScore.toString();
+    String effect;
+    if (multiplier > 1){
+      effect = "x" + multiplier.toString();
+    } else {
+      effect = "+" + comboScore.toString();
+    }
+    this.columnEffects[minX][minY] = effect;
     return new Future.delayed(const Duration(seconds: 1), () => [minX, minY]);
   }
 
