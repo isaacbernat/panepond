@@ -146,28 +146,39 @@ class Board extends PolymerElement {
     if (matches.length == 0) return;
 
     for(var m in matches) {
-      this.columns[m["x"]][m["y"]].type = 0;
+      for(var tile in m) {
+        this.columns[tile["x"]][tile["y"]].type = 0;
+      }
+      gravity(m);
     }
-    gravity(matches);
     resolveMatchesInit();
   }
 
   void resolveMatches(List <Map <String, num>> tiles, num multiplier) {
-    //TODO: different colours -> different combos, even if they result from the same instant
     var matches = getMatches(tiles, rules);
     if (matches.length == 0) return;
 
-    num comboScore = max(0, (matches.length - rules["min_matching_length"]) +1);
-    totalScore += comboScore * multiplier;
-    showEffects(matches, comboScore, multiplier).then((tile) => clearEffects(tile));
+    if (multiplier == 1) { // the first match treats all tiles as the same "combo"
+      tiles = matches.expand((i) => i).toList(); // flatten
+      num comboScore = tiles.length - rules["min_matching_length"] +1;
+      totalScore += comboScore * multiplier;
+      showEffects(tiles, comboScore, multiplier++).then((tile) => clearEffects(tile));
+    } else { // in a cumulative combo, combinations score on their own (and add to the multiplier)
+      for (var m in matches) {
+        num comboScore = m.length - rules["min_matching_length"] +1;
+        totalScore += comboScore * multiplier;
+        showEffects(m, comboScore, multiplier++).then((tile) => clearEffects(tile));
+      }
+    }
+
     clearMatches(matches)
       .then((positions) => gravity(positions))
-      .then((positions) => resolveMatches(positions, ++multiplier));
+      .then((positions) => resolveMatches(positions, multiplier));
   }
 
-  List getMatches(List <Map <String, num>> tiles, rules) { //TODO: scan only needed elements
+  List <List<Map <String, num>>> getMatches(List <Map <String, num>> tiles, rules) { //TODO: scan only needed elements
     Map <String, bool> scanned = {};
-    var matchedTiles = new Set();
+    var matchedTiles = [];
     for(var t in tiles) {
       for(var axis in t.keys) {
         if (scanned.containsKey(axis + t[axis].toString())) {
@@ -187,23 +198,27 @@ class Board extends PolymerElement {
             accumTiles.add({"x": c.x, "y": c.y});
           } else {
             if (accumTiles.length >= rules["min_matching_length"]) {
-              matchedTiles.addAll(accumTiles);
+              matchedTiles.add(accumTiles);
             }
             accumTiles = [{"x": c.x, "y": c.y}];
             prevType = c.type;
           }
         }
         if (accumTiles.length >= rules["min_matching_length"]) {
-          matchedTiles.addAll(accumTiles);
+          matchedTiles.add(accumTiles);
         }
       }
     }
     return matchedTiles;
   }
 
-  Future clearMatches(List <Map <String, num>> tiles) {
-    for(var t in tiles) {
-      this.columns[t["x"]][t["y"]].type = 0;
+  Future clearMatches(List <List <Map <String, num>>> matches) {
+    List <Map <String, num>> tiles = [];
+    for (var m in matches) {
+      for(var tile in m) {
+        this.columns[tile["x"]][tile["y"]].type = 0;
+      }
+      tiles.addAll(m);
     }
     return new Future.delayed(const Duration(seconds: 1), () => tiles);
   }

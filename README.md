@@ -28,3 +28,16 @@ TODOs
 - save replay
 - configurability (user keys, random seed, grid size, scoring system, etc.)
 - etc.
+
+Versions
+--------
+I'll try to keep some "noteworhty" versions listed here. I'll try to produce incremental updates, so you can check out how the code base (and panepond) looked at some point in time. This way, anybody can see the evolution or try to learn some of the technologies used by looking at the project at earlier smaller/simpler stages.
+
+The format will be: version number, github hash, small description of main features
+
+- 0.1.0: [9b9d3254b8ed98ec9c2d5a7227ce66078c1c11b4](https://github.com/isaacbernat/panepond/tree/9b9d3254b8ed98ec9c2d5a7227ce66078c1c11b4)
+  - single player
+  - classic fixed layout(12x6 tiles board, 6 different kinds of tiles, 2-length cursor, etc.)
+  - cumulative multipliers and "bonus" for >3-length combos
+  - 'instant' gravity
+  - fixed basic controls (movement + action)
