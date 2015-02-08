@@ -73,7 +73,7 @@ class Board extends PolymerElement {
   bool cursorLock = false;
   num moveFreeze = -1;
   @observable num totalScore = 0;
-  @observable Config config = new Config(6, 12);
+  @observable Config config = new Config(6, 12, 40);
 
   @observable List<List<Tile>> columns;
   @observable List<List<String>> columnEffects;
@@ -83,6 +83,7 @@ class Board extends PolymerElement {
   void updateConfig() {
     config.height = config.height is String ? int.parse(config.height) : config.height;
     config.width = config.width is String ? int.parse(config.width) : config.width;
+    config.tileSize = config.tileSize is String ? int.parse(config.tileSize) : config.tileSize;
     init();
   }
 
