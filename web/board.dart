@@ -136,7 +136,7 @@ class Board extends PolymerElement {
     t2.state = States.swap;
     new Future.delayed(const Duration(seconds: 1), () => [pos1, pos2])
       .then((positions) => gravity(positions))
-      .then((positions) => resolveMatches(positions, 1));
+      .then((positions) => resolveMatches(positions, 1, 0));
     new Future.delayed(const Duration(seconds: 1), () => [t1, t2])
       .then((tiles) => changeState(tiles, States.still));
     return;
@@ -162,26 +162,28 @@ class Board extends PolymerElement {
     resolveMatchesInit();
   }
 
-  void resolveMatches(List <Map <String, num>> tiles, num multiplier) {
+  void resolveMatches(List <Map <String, num>> tiles, num multiplier, num accumScore) {
     var matches = getMatches(tiles, rules);
-    if (matches.length == 0) return;
+    if (matches.length == 0) {
+      totalScore += accumScore * (multiplier -1);
+      return;
+    }
 
     if (multiplier == 1) { // the first match treats all tiles as the same "combo"
       tiles = matches.expand((i) => i).toList(); // flatten
-      num comboScore = tiles.length == rules["min_matching_length"]? 2:tiles.length;
-      totalScore += comboScore * multiplier;
-      showEffects(tiles, comboScore, multiplier++).then((tile) => clearEffects(tile));
+      accumScore = tiles.length == rules["min_matching_length"]? 2:tiles.length;
+      showEffects(tiles, accumScore, multiplier++).then((tile) => clearEffects(tile));
     } else { // in a cumulative combo, combinations score on their own (and add to the multiplier)
       for (var m in matches) {
-        num comboScore = tiles.length == rules["min_matching_length"]? 2:tiles.length;
-        totalScore += comboScore * multiplier;
+        num comboScore = m.length == rules["min_matching_length"]? 2:m.length;
+        accumScore += comboScore;
         showEffects(m, comboScore, multiplier++).then((tile) => clearEffects(tile));
       }
     }
 
     clearMatches(matches)
       .then((positions) => gravity(positions))
-      .then((positions) => resolveMatches(positions, multiplier));
+      .then((positions) => resolveMatches(positions, multiplier, accumScore));
   }
 
   List <List<Map <String, num>>> getMatches(List <Map <String, num>> tiles, rules) { //TODO: scan only needed elements
