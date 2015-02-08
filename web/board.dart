@@ -78,6 +78,7 @@ class Board extends PolymerElement {
   @observable List<List<Tile>> columns;
   @observable List<List<String>> columnEffects;
   Board.created() : super.created();
+  @observable num leftMarginOffset;
 
   void updateConfig() {
     config.height = config.height is String ? int.parse(config.height) : config.height;
@@ -89,6 +90,7 @@ class Board extends PolymerElement {
     totalScore = 0;
     columns = toObservable(range(0, config.width).map((i) => range(0, config.height).map((j) => j < 3 ? new Tile(0, i, j) : new Tile(rand.nextInt(6) + 1, i, j))));
     columnEffects = toObservable(range(0, config.width).map((j) => range(0, config.height).map((i) => " ")));
+    leftMarginOffset = config.width * -1;
     resolveMatchesInit();
   }
 

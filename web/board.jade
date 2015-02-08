@@ -3,25 +3,27 @@ link(rel="import" href="packages/polymer/polymer.html")
 
 polymer-element(name="panepond-board")
   template
-    p.score total {{totalScore}}
     .config
       label height
       input(type='number', name='height', value="{{config.height}}")
+      label width
+      input(type='number', name='width', value="{{config.width}}")
       input.update(type='button', name='update', value="update" on-click="{{updateConfig}}")
 
+    p.score total {{totalScore}}
     .board.ti
       template(repeat="{{col in columns | enumerate}}")
         .col
           template(repeat="{{tile in col.value | enumerate}}")
             .tile(class="type{{tile.value.type}}" pos="{{col.index}},{{tile.index}}") {{tile.value.symbols[tile.value.type]}}
 
-    .board.cu
+    .board.cu(style='margin-left:{{leftMarginOffset}}em')
       template(repeat="{{col in columns | enumerate}}")
         .col
             template(repeat="{{tile in col.value | enumerate}}")
               .tile(class="{{(col.index >= cursor['x'] && col.index < cursor['x'] + cursor['width']\
                           && tile.index >= cursor['y'] && tile.index < cursor['y'] + cursor['height'])? \"cursor\" : ''}}") &nbsp;
-    .board.ef
+    .board.ef(style='margin-left:{{leftMarginOffset}}em')
       template(repeat="{{col in columnEffects | enumerate}}")
         .col
           template(repeat="{{tile in col.value | enumerate}}")
