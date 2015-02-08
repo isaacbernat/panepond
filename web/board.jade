@@ -4,6 +4,11 @@ link(rel="import" href="packages/polymer/polymer.html")
 polymer-element(name="panepond-board")
   template
     p.score total {{totalScore}}
+    .config
+      label height
+      input(type='number', name='height', value="{{config.height}}")
+      input.update(type='button', name='update', value="update" on-click="{{updateConfig}}")
+
     .board.ti
       template(repeat="{{col in columns | enumerate}}")
         .col

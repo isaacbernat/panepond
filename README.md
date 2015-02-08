@@ -2,7 +2,9 @@ panepond: Panel de Pon with D(art)
 ==================================
 Features
 --------
-ATM this is very WIP. Just displaying a grid randomly filled with tiles and a moveable cursor where you can make combos and get points.
+ATM panepond is still WIP, but it is aimed to become a *[panepon](http://en.wikipedia.org/wiki/Yoshi%27s_Panepon)/[panel de pon](http://en.wikipedia.org/wiki/Tetris_Attack#Panel_de_Pon)/[tetris attack](http://en.wikipedia.org/wiki/Tetris_Attack)/[crack attack](http://www.aluminumangel.org/attack/)* clone with major improvements.
+
+For a semi-detailed list check [version section](#versions)
 
 Run this
 --------
@@ -14,19 +16,19 @@ Run this
 Why?
 ----
 Despite preferring backend stuff I wanted to try out modern alternatives to JavaScript, CSS and HTML to build a webapp.
-After looking around I decided on [Dart](https://www.dartlang.org/) (+ [Polymer](https://www.dartlang.org/polymer/)), [Sass](http://sass-lang.com/) and [Jade](http://jade-lang.com/). I thought a *panepon/panel de pon/tetris attack/crack attack* inspired game could be fun.
+After looking around I decided on [Dart](https://www.dartlang.org/) (+ [Polymer](https://www.dartlang.org/polymer/)), [Sass](http://sass-lang.com/) and [Jade](http://jade-lang.com/).
 
 **Note:** Since I am a n00b at this I may not be using them at full power, or even making silly mistakes (e.g. why would I ever use the DOM instead of the canvas?). Suggestions are welcome :)
 
-TODOs
+TODOs (in no specific order)
 -----
 - tests
 - versus mode on one window (N players)
 - versus mode on different machines (N players)
 - time attack mode
-- AIs (pluggable)
+- Artifical Intelligences (pluggable)
 - save replay
-- configurability (user keys, random seed, grid size, scoring system, etc.)
+- configurability (user keys, random seed, grid size, scoring system, etc.) -- **WIP**
 - etc.
 
 Versions
@@ -35,7 +37,7 @@ I'll try to keep some "noteworhty" versions listed here. I'll try to produce inc
 
 The format will be: version number, github hash, small description of main features
 
-- 0.1.0: [9b9d3254b8ed98ec9c2d5a7227ce66078c1c11b4](https://github.com/isaacbernat/panepond/tree/9b9d3254b8ed98ec9c2d5a7227ce66078c1c11b4)
+- 0.1.0: [0927349c87c9bc96fdcd2a02c6c9c6cdcd98cd10](https://github.com/isaacbernat/panepond/tree/0927349c87c9bc96fdcd2a02c6c9c6cdcd98cd10)
   - single player
   - classic fixed layout(12x6 tiles board, 6 different kinds of tiles, 2-length cursor, etc.)
   - cumulative multipliers and "bonus" for >3-length combos

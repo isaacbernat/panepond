@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:polymer/polymer.dart';
 import "package:range/range.dart";
+import 'config.dart';
 
 
 main() {
@@ -72,15 +73,22 @@ class Board extends PolymerElement {
   bool cursorLock = false;
   num moveFreeze = -1;
   @observable num totalScore = 0;
-  num width = 6; //x
-  num height = 12; //y
+  @observable Config config = new Config(6, 12);
+
   @observable List<List<Tile>> columns;
   @observable List<List<String>> columnEffects;
   Board.created() : super.created();
 
+  void updateConfig() {
+    config.height = config.height is String ? int.parse(config.height) : config.height;
+    config.width = config.width is String ? int.parse(config.width) : config.width;
+    init();
+  }
+
   void init() {
-    columns = toObservable(range(0, width).map((i) => range(0, height).map((j) => j < 3 ? new Tile(0, i, j) : new Tile(rand.nextInt(6) + 1, i, j))));
-    columnEffects = toObservable(range(0, 6).map((j) => range(0, 12).map((i) => " ")));
+    totalScore = 0;
+    columns = toObservable(range(0, config.width).map((i) => range(0, config.height).map((j) => j < 3 ? new Tile(0, i, j) : new Tile(rand.nextInt(6) + 1, i, j))));
+    columnEffects = toObservable(range(0, config.width).map((j) => range(0, config.height).map((i) => " ")));
     resolveMatchesInit();
   }
 
@@ -90,11 +98,11 @@ class Board extends PolymerElement {
     if (keyCode == controls[Controls.up]) {
       moveCursor("y", max(0, cursor["y"] -1), Controls.up);
     } else if (keyCode == controls[Controls.down]) {
-      moveCursor("y", min(height -cursor["height"], cursor["y"] +1), Controls.down);
+      moveCursor("y", min(config.height -cursor["height"], cursor["y"] +1), Controls.down);
     } else if (keyCode == controls[Controls.left]) {
       moveCursor("x", max(0, cursor["x"] -1), Controls.left);
     } else if (keyCode == controls[Controls.right]) {
-      moveCursor("x", min(width -cursor["width"], cursor["x"] +1), Controls.right);
+      moveCursor("x", min(config.width -cursor["width"], cursor["x"] +1), Controls.right);
     }
     else if (keyCode == controls[Controls.action]) {
       Map <String, num> pos1, pos2;
@@ -141,7 +149,7 @@ class Board extends PolymerElement {
   }
 
   void resolveMatchesInit() { //FIXME: this is very naive -- but it is only run at init
-    List <Map <String, num>> tiles = range(0, width*height).map((i) => {"x": (i/height).floor(), "y": i%height});
+    List <Map <String, num>> tiles = range(0, config.width*config.height).map((i) => {"x": (i/config.height).floor(), "y": i%config.height});
     var matches = getMatches(tiles, rules);
     if (matches.length == 0) return;
 
@@ -160,12 +168,12 @@ class Board extends PolymerElement {
 
     if (multiplier == 1) { // the first match treats all tiles as the same "combo"
       tiles = matches.expand((i) => i).toList(); // flatten
-      num comboScore = tiles.length - rules["min_matching_length"] +1;
+      num comboScore = tiles.length == rules["min_matching_length"]? 2:tiles.length;
       totalScore += comboScore * multiplier;
       showEffects(tiles, comboScore, multiplier++).then((tile) => clearEffects(tile));
     } else { // in a cumulative combo, combinations score on their own (and add to the multiplier)
       for (var m in matches) {
-        num comboScore = m.length - rules["min_matching_length"] +1;
+        num comboScore = tiles.length == rules["min_matching_length"]? 2:tiles.length;
         totalScore += comboScore * multiplier;
         showEffects(m, comboScore, multiplier++).then((tile) => clearEffects(tile));
       }
