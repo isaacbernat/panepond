@@ -6,13 +6,21 @@ polymer-element(name="panepond-board")
     .config
       div
         label height
-        input(type='number', name='height', value="{{config.height}}")
+        input(type='number', value="{{config.height}}")
         label width
-        input(type='number', name='width', value="{{config.width}}")
-        input.update(type='button', name='update', value="update" on-click="{{updateConfig}}")
+        input(type='number', value="{{config.width}}")
+        input.update(type='button', value="update" on-click="{{updateConfig}}")
       div
         label tile size
-        input(type='number', name='width', value="{{config.tileSize}}")
+        input(type='number', value="{{config.tileSize}}")
+      div
+        p Click button and press key to change controls
+        input.update(type='button', value="up" on-click="{{updateKeyUp}}")
+        input.update(type='button', value="down" on-click="{{updateKeyDown}}")
+        input.update(type='button', value="right" on-click="{{updateKeyRight}}")
+        input.update(type='button', value="left" on-click="{{updateKeyLeft}}")
+        input.update(type='button', value="action" on-click="{{updateKeyAction}}")
+        p Type {{controlsChars[0]}} {{controlsChars[1]}} {{controlsChars[2]}} {{controlsChars[3]}} to move around. Press {{controlsChars[4]}} for action
 
     p.score total {{totalScore}}
     .board.ti(style='font-size:{{config.tileSize}}px')

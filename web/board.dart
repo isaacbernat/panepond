@@ -28,11 +28,11 @@ main() {
 //     up, down, left ,right, action
 // }
 class Controls {
-  static const up = const Controls._(0);
-  static const down = const Controls._(1);
-  static const left = const Controls._(2);
-  static const right = const Controls._(3);
-  static const action = const Controls._(4);
+  static const up = 0;
+  static const down = 1;
+  static const left = 2;
+  static const right = 3;
+  static const action = 4;
 
   static get values => [up, down, left, right, action];
   final int value;
@@ -60,6 +60,13 @@ class Board extends PolymerElement {
     Controls.right: KeyCode.L,
     Controls.action: KeyCode.Q,
   };
+  @observable Map<num, num> controlsChars = toObservable( {
+    Controls.up: "I",
+    Controls.down: "K",
+    Controls.left: "J",
+    Controls.right: "L",
+    Controls.action: "Q",
+  });
   Map rules = {
     "min_matching_length": 3,
   };
@@ -83,9 +90,21 @@ class Board extends PolymerElement {
   void updateConfig() {
     config.height = config.height is String ? int.parse(config.height) : config.height;
     config.width = config.width is String ? int.parse(config.width) : config.width;
-    config.tileSize = config.tileSize is String ? int.parse(config.tileSize) : config.tileSize;
     init();
   }
+
+  void updateKey(num control) {
+    window.onKeyDown.first.then((e) {
+      controls[control] = e.keyCode;
+      controlsChars[control] = new String.fromCharCodes([e.keyCode]);
+    });
+  }
+
+  void updateKeyUp() => updateKey(Controls.up);
+  void updateKeyDown() => updateKey(Controls.down);
+  void updateKeyRight() => updateKey(Controls.right);
+  void updateKeyLeft() => updateKey(Controls.left);
+  void updateKeyAction() => updateKey(Controls.action);
 
   void init() {
     totalScore = 0;
