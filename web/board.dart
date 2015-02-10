@@ -41,9 +41,9 @@ class Controls {
 
 
 class States {
-  static const still = const Controls._(0);
-  static const fall = const Controls._(1);
-  static const swap = const Controls._(2);
+  static const still = const States._(0);
+  static const fall = const States._(1);
+  static const swap = const States._(2);
 
   static get values => [still, fall, swap];
   final int value;
@@ -60,7 +60,7 @@ class Board extends PolymerElement {
     Controls.right: KeyCode.L,
     Controls.action: KeyCode.Q,
   };
-  @observable Map<num, num> controlsChars = toObservable( {
+  @observable Map<num, String> controlsChars = toObservable( {
     Controls.up: "I",
     Controls.down: "K",
     Controls.left: "J",

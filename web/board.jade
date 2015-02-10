@@ -3,6 +3,8 @@ link(rel="import" href="packages/polymer/polymer.html")
 
 polymer-element(name="panepond-board")
   template
+    h3.score score: {{totalScore}}
+
     .config
       div
         label height
@@ -22,7 +24,6 @@ polymer-element(name="panepond-board")
         input.update(type='button', value="action" on-click="{{updateKeyAction}}")
         p Type {{controlsChars[0]}} {{controlsChars[1]}} {{controlsChars[2]}} {{controlsChars[3]}} to move around. Press {{controlsChars[4]}} for action
 
-    p.score total {{totalScore}}
     .board.ti(style='font-size:{{config.tileSize}}px')
       template(repeat="{{col in columns | enumerate}}")
         .col
