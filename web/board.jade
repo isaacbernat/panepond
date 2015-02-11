@@ -3,9 +3,10 @@ link(rel="import" href="packages/polymer/polymer.html")
 
 polymer-element(name="panepond-board")
   template
-    h3.score score: {{totalScore}}
+    input.update(type='button', value="toggle config" on-click="{{toggleConfig}}")
+    label score: {{totalScore}}
 
-    .config
+    .config(style='display:{{config.display}}')
       div
         label height
         input(type='number', value="{{config.height}}")

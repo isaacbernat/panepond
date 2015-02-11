@@ -87,6 +87,7 @@ class Board extends PolymerElement {
   Board.created() : super.created();
   @observable num leftMarginOffset;
 
+  void toggleConfig() => config.display == "none" ? config.display = "block" : config.display = "none";
   void updateConfig() {
     config.height = config.height is String ? int.parse(config.height) : config.height;
     config.width = config.width is String ? int.parse(config.width) : config.width;
