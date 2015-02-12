@@ -88,6 +88,16 @@ class Board extends PolymerElement {
   @observable num leftMarginOffset;
 
   void toggleConfig() => config.display == "none" ? config.display = "block" : config.display = "none";
+  void updateDelays() { //TODO put this into a nicer loop or sth.
+    config.delays["swap"] = config.delays["swap"] is String ? int.parse(config.delays["swap"]) : config.delays["swap"];
+    config.delays["resolve"] = config.delays["resolve"] is String ? int.parse(config.delays["resolve"]) : config.delays["resolve"];
+    config.delays["effects"] = config.delays["effects"] is String ? int.parse(config.delays["effects"]) : config.delays["effects"];
+    config.delayDurations["swap"] = new Duration(seconds: config.delays["swap"]);
+    config.delayDurations["resolve"] = new Duration(seconds: config.delays["resolve"]);
+    config.delayDurations["effects"] = new Duration(seconds: config.delays["effects"]);
+    init();
+  }
+
   void updateConfig() {
     config.height = config.height is String ? int.parse(config.height) : config.height;
     config.width = config.width is String ? int.parse(config.width) : config.width;
@@ -157,10 +167,10 @@ class Board extends PolymerElement {
     t1.state = States.swap;
     t2.type = tmpType;
     t2.state = States.swap;
-    new Future.delayed(const Duration(seconds: 1), () => [pos1, pos2])
+    new Future.delayed(config.delayDurations["swap"], () => [pos1, pos2])
       .then((positions) => gravity(positions))
       .then((positions) => resolveMatches(positions, 1, 0));
-    new Future.delayed(const Duration(seconds: 1), () => [t1, t2])
+    new Future.delayed(config.delayDurations["resolve"], () => [t1, t2])
       .then((tiles) => changeState(tiles, States.still));
     return;
   }
@@ -253,7 +263,7 @@ class Board extends PolymerElement {
       }
       tiles.addAll(m);
     }
-    return new Future.delayed(const Duration(seconds: 1), () => tiles);
+    return new Future.delayed(config.delayDurations["resolve"], () => tiles);
   }
 
   List <Map <String, num>> gravity(List <Map <String, num>> positions) {
@@ -302,7 +312,7 @@ class Board extends PolymerElement {
       effect = "+" + comboScore.toString();
     }
     this.columnEffects[minX][minY] = effect;
-    return new Future.delayed(const Duration(seconds: 1), () => [minX, minY]);
+    return new Future.delayed(config.delayDurations["effects"], () => [minX, minY]);
   }
 
   void clearEffects(List<num> coordinates) {

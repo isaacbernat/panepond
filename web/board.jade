@@ -8,6 +8,7 @@ polymer-element(name="panepond-board")
 
     .config(style='display:{{config.display}}')
       div
+        h4 board dimensions (in tiles)
         label height
         input(type='number', value="{{config.height}}")
         label width
@@ -16,6 +17,15 @@ polymer-element(name="panepond-board")
       div
         label tile size
         input(type='number', value="{{config.tileSize}}")
+      div
+        h4 delays (in seconds)
+        label swap
+        input(type='number', value="{{config.delays['swap']}}")
+        label resolve
+        input(type='number', value="{{config.delays['resolve']}}")
+        label effects
+        input(type='number', value="{{config.delays['effects']}}")
+        input.update(type='button', value="update" on-click="{{updateDelays}}")
       div
         p Click button and press key to change controls
         input.update(type='button', value="up" on-click="{{updateKeyUp}}")
