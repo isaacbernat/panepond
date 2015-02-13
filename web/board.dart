@@ -80,7 +80,7 @@ class Board extends PolymerElement {
   bool cursorLock = false;
   num moveFreeze = -1;
   @observable num totalScore = 0;
-  @observable Config config = new Config(6, 12, 40);
+  @observable Config config = new Config(6, 12, "40");
 
   @observable List<List<Tile>> columns;
   @observable List<List<String>> columnEffects;
@@ -88,19 +88,14 @@ class Board extends PolymerElement {
   @observable num leftMarginOffset;
 
   void toggleConfig() => config.display == "none" ? config.display = "block" : config.display = "none";
-  void updateDelays() { //TODO put this into a nicer loop or sth.
-    config.delays["swap"] = config.delays["swap"] is String ? int.parse(config.delays["swap"]) : config.delays["swap"];
-    config.delays["resolve"] = config.delays["resolve"] is String ? int.parse(config.delays["resolve"]) : config.delays["resolve"];
-    config.delays["effects"] = config.delays["effects"] is String ? int.parse(config.delays["effects"]) : config.delays["effects"];
-    config.delayDurations["swap"] = new Duration(seconds: config.delays["swap"]);
-    config.delayDurations["resolve"] = new Duration(seconds: config.delays["resolve"]);
-    config.delayDurations["effects"] = new Duration(seconds: config.delays["effects"]);
+  void updateDelays() {
+    config.delays.forEach((k, v) => config.delayDurations[k] = new Duration(seconds: int.parse(v)));
     init();
   }
 
   void updateConfig() {
-    config.height = config.height is String ? int.parse(config.height) : config.height;
-    config.width = config.width is String ? int.parse(config.width) : config.width;
+    config.height = int.parse(config.inputHeight);
+    config.width = int.parse(config.inputWidth);
     init();
   }
 
