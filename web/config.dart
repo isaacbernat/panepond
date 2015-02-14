@@ -8,16 +8,16 @@ class Config extends Observable{
     @observable String tileSize;
     @observable String display = "block";
     @observable Map <String, num> delays = toObservable({
-      "swap": "1",
-      "resolve": "1",
-      "effects": "1",
+      "swap": "120",
+      "resolve": "1800",
+      "effects": "1800",
     });
     num height;
     num width;
     Map <String, Duration> delayDurations = {
-      "swap": new Duration(seconds: 1),
-      "resolve": new Duration(seconds: 1),
-      "effects": new Duration(seconds: 1),
+      "swap": new Duration(milliseconds: 120),
+      "resolve": new Duration(milliseconds: 1800),
+      "effects": new Duration(milliseconds: 1800),
     };
     Config(w, h, ts) : width = w, height = h, tileSize = ts, inputWidth=h.toString(), inputHeight=h.toString();
 }

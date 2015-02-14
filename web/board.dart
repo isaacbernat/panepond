@@ -44,8 +44,9 @@ class States {
   static const still = const States._(0);
   static const fall = const States._(1);
   static const swap = const States._(2);
+  static const dying = const States._(3);
 
-  static get values => [still, fall, swap];
+  static get values => [still, fall, swap, dying];
   final int value;
   const States._(this.value);
 }
@@ -89,7 +90,7 @@ class Board extends PolymerElement {
 
   void toggleConfig() => config.display == "none" ? config.display = "block" : config.display = "none";
   void updateDelays() {
-    config.delays.forEach((k, v) => config.delayDurations[k] = new Duration(seconds: int.parse(v)));
+    config.delays.forEach((k, v) => config.delayDurations[k] = new Duration(milliseconds: int.parse(v)));
     init();
   }
 
@@ -155,7 +156,7 @@ class Board extends PolymerElement {
   void swapTiles(Map <String, num> pos1, Map <String, num> pos2) {
     Tile t1 = this.columns[pos1["x"]][pos1["y"]];
     Tile t2 = this.columns[pos2["x"]][pos2["y"]];
-    if (t1.state != States.still && t2.state != States.still) return;
+    if (t1.state != States.still || t2.state != States.still) return;
 
     num tmpType = t1.type;
     t1.type = t2.type;
@@ -165,7 +166,7 @@ class Board extends PolymerElement {
     new Future.delayed(config.delayDurations["swap"], () => [pos1, pos2])
       .then((positions) => gravity(positions))
       .then((positions) => resolveMatches(positions, 1, 0));
-    new Future.delayed(config.delayDurations["resolve"], () => [t1, t2])
+    new Future.delayed(config.delayDurations["swap"], () => [t1, t2])
       .then((tiles) => changeState(tiles, States.still));
     return;
   }
@@ -190,17 +191,17 @@ class Board extends PolymerElement {
     resolveMatchesInit();
   }
 
-  void resolveMatches(List <Map <String, num>> tiles, num multiplier, num accumScore) {
-    var matches = getMatches(tiles, rules);
+  void resolveMatches(List <Map <String, num>> candidatePositions, num multiplier, num accumScore) {
+    List <List <Map <String, num>>> matches = getMatches(candidatePositions, rules);
     if (matches.length == 0) {
       totalScore += accumScore * (multiplier -1);
       return;
     }
 
-    if (multiplier == 1) { // the first match treats all tiles as the same "combo"
-      tiles = matches.expand((i) => i).toList(); // flatten
-      accumScore = tiles.length == rules["min_matching_length"]? 2:tiles.length;
-      showEffects(tiles, accumScore, multiplier++).then((tile) => clearEffects(tile));
+    List <Map <String, num>> tilePositions = matches.expand((i) => i).toList(); // flatten
+    if (multiplier == 1) { // the first match treats all tilePositions as the same "combo"
+      accumScore = tilePositions.length == rules["min_matching_length"]? 2:tilePositions.length;
+      showEffects(tilePositions, accumScore, multiplier++).then((tile) => clearEffects(tile));
     } else { // in a cumulative combo, combinations score on their own (and add to the multiplier)
       for (var m in matches) {
         num comboScore = m.length == rules["min_matching_length"]? 2:m.length;
@@ -208,6 +209,11 @@ class Board extends PolymerElement {
         showEffects(m, comboScore, multiplier++).then((tile) => clearEffects(tile));
       }
     }
+
+    List <Tile> tiles = tilePositions.map((t) => this.columns[t["x"]][t["y"]]);
+    changeState(tiles, States.dying);
+    new Future.delayed(config.delayDurations["resolve"], () => tiles)
+      .then((tiles) => changeState(tiles, States.still));
 
     clearMatches(matches)
       .then((positions) => gravity(positions))
