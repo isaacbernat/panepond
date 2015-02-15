@@ -163,11 +163,11 @@ class Board extends PolymerElement {
     t1.state = States.swap;
     t2.type = tmpType;
     t2.state = States.swap;
+    new Future.delayed(config.delayDurations["swap"], () => [t1, t2])
+      .then((tiles) => changeState(tiles, States.still));
     new Future.delayed(config.delayDurations["swap"], () => [pos1, pos2])
       .then((positions) => gravity(positions))
       .then((positions) => resolveMatches(positions, 1, 0));
-    new Future.delayed(config.delayDurations["swap"], () => [t1, t2])
-      .then((tiles) => changeState(tiles, States.still));
     return;
   }
 
@@ -273,7 +273,7 @@ class Board extends PolymerElement {
     List <Map <String, num>> gravityPositions = [];
     for(var c in columns) {
       for (var i = len -1; i > 0; i--) {
-        if(this.columns[c][i].type == 0) {
+        if(this.columns[c][i].type == 0 && this.columns[c][i].state == States.still) {
           num highestType = 0;
           for (var j = i; j > 1; j--) {
             highestType = max(highestType, this.columns[c][j-1].type);
