@@ -71,7 +71,7 @@ class Board extends PolymerElement {
   Map rules = {
     "min_matching_length": 3,
   };
-  static var rand = new Random(); //Random(1234); //a fixed seed for debugging purposes
+  static var rand = new Random(1234);
   @observable Map<String, num> cursor = toObservable({
     "x": 3,
     "y": 3,
@@ -97,6 +97,13 @@ class Board extends PolymerElement {
   void updateConfig() {
     config.height = int.parse(config.inputHeight);
     config.width = int.parse(config.inputWidth);
+    init();
+  }
+
+  void generateRandomSeed() => config.randomSeed = rand.nextInt(999999).toString();
+
+  void updateRandomSeed() {
+    rand = new Random(int.parse(config.randomSeed));
     init();
   }
 

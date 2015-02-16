@@ -17,6 +17,10 @@ polymer-element(name="panepond-board")
       div
         label tile size
         input(type='number', value="{{config.tileSize}}")
+        label random seed
+        input(type='number', value="{{config.randomSeed}}")
+        input.update(type='button', value="generate" on-click="{{generateRandomSeed}}")
+        input.update(type='button', value="update" on-click="{{updateRandomSeed}}")
       div
         h4 delays (in milliseconds)
         label swap
@@ -27,7 +31,7 @@ polymer-element(name="panepond-board")
         input(type='number', value="{{config.delays['effects']}}")
         input.update(type='button', value="update" on-click="{{updateDelays}}")
       div
-        p Click button and press key to change controls
+        h4 Click button and press key to change controls
         input.update(type='button', value="up" on-click="{{updateKeyUp}}")
         input.update(type='button', value="down" on-click="{{updateKeyDown}}")
         input.update(type='button', value="right" on-click="{{updateKeyRight}}")

@@ -12,6 +12,7 @@ class Config extends Observable{
       "resolve": "1800",
       "effects": "1800",
     });
+    @observable String randomSeed = "1234";
     num height;
     num width;
     Map <String, Duration> delayDurations = {
@@ -19,5 +20,5 @@ class Config extends Observable{
       "resolve": new Duration(milliseconds: 1800),
       "effects": new Duration(milliseconds: 1800),
     };
-    Config(w, h, ts) : width = w, height = h, tileSize = ts, inputWidth=h.toString(), inputHeight=h.toString();
+    Config(w, h, ts) : width = w, height = h, tileSize = ts, inputWidth=w.toString(), inputHeight=h.toString();
 }
