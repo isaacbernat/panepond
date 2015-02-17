@@ -1,8 +1,9 @@
 import 'package:polymer/polymer.dart';
 import 'dart:async';
+import 'dart:convert';
 
 
-class Config extends Observable{
+class Config extends Observable {
     @observable String inputWidth; //x
     @observable String inputHeight; //y
     @observable String tileSize;
@@ -20,5 +21,26 @@ class Config extends Observable{
       "resolve": new Duration(milliseconds: 1800),
       "effects": new Duration(milliseconds: 1800),
     };
+    @observable String jsonDump = "";
     Config(w, h, ts) : width = w, height = h, tileSize = ts, inputWidth=w.toString(), inputHeight=h.toString();
+
+    Config longConstructor(w, h, ts, r, d) {
+      width = w;
+      height = h;
+      inputWidth=w.toString();
+      inputHeight=h.toString();
+      tileSize = ts;
+      randomSeed = r;
+      delays = toObservable(d);
+    }
+
+    String export() {
+      return JSON.encode({
+        "input-width": inputWidth,
+        "input-height": inputHeight,
+        "tile-size": tileSize,
+        "delays": delays,
+        "random-seed": randomSeed,
+      });
+    }
 }

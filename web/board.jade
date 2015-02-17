@@ -8,6 +8,9 @@ polymer-element(name="panepond-board")
 
     .config(style='display:{{config.display}}')
       div
+        textarea(rows='4', cols="50" disabled="true") "{{config.jsonDump}}"
+        input.update(type='button', value="export config" on-click="{{exportConfig}}")
+      div
         h4 board dimensions (in tiles)
         label height
         input(type='number', value="{{config.height}}")
