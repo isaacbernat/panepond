@@ -95,6 +95,7 @@ class Board extends PolymerElement {
   }
 
   void exportConfig() => config.jsonDump = config.export();
+  void importConfig() => config.import(config.jsonDump);
 
   void updateConfig() {
     config.height = int.parse(config.inputHeight);

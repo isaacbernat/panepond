@@ -43,4 +43,14 @@ class Config extends Observable {
         "random-seed": randomSeed,
       });
     }
+
+    void import(String dump) {
+      var tmp = JSON.decode(dump);
+      inputWidth = tmp["input-width"] != null?tmp["input-width"]:inputWidth;
+      inputHeight = tmp["input-height"] != null?tmp["input-height"]:inputHeight;
+      tileSize = tmp["tile-size"] != null?tmp["tile-size"]:tileSize;
+      randomSeed = tmp["random-seed"] != null?tmp["random-seed"]:randomSeed;
+      delays = tmp["delays"] != null?toObservable(tmp["delays"]):delays;
+      delays.forEach((k, v) => delayDurations[k] = new Duration(milliseconds: int.parse(v)));
+    }
 }
