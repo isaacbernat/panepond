@@ -22,6 +22,15 @@ class Config extends Observable {
       "effects": new Duration(milliseconds: 1800),
     };
     @observable String jsonDump = "";
+
+    @observable Map<num, String> controls = toObservable( {
+      Controls.up: "I",
+      Controls.down: "K",
+      Controls.left: "J",
+      Controls.right: "L",
+      Controls.action: "Q",
+    });
+
     Config(w, h, ts) : width = w, height = h, tileSize = ts, inputWidth=w.toString(), inputHeight=h.toString();
 
     Config longConstructor(w, h, ts, r, d) {
@@ -41,6 +50,7 @@ class Config extends Observable {
         "tile-size": tileSize,
         "delays": delays,
         "random-seed": randomSeed,
+        "controls": controls,
       });
     }
 
@@ -52,5 +62,20 @@ class Config extends Observable {
       randomSeed = tmp["random-seed"] != null?tmp["random-seed"]:randomSeed;
       delays = tmp["delays"] != null?toObservable(tmp["delays"]):delays;
       delays.forEach((k, v) => delayDurations[k] = new Duration(milliseconds: int.parse(v)));
+      controls = tmp["controls"] != null?toObservable(tmp["controls"]):controls;
     }
+}
+
+
+//TODO check out enums? (new in dart 1.8.0.)
+class Controls { // can't use nums because otherwise the JSON encoder breaks :(
+  static const up = "0";
+  static const down = "1";
+  static const left = "2";
+  static const right = "3";
+  static const action = "4";
+
+  static get values => [up, down, left, right, action];
+  final int value;
+  const Controls._(this.value);
 }

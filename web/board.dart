@@ -13,7 +13,7 @@ main() {
       // Code that executes after elements have been upgraded.
       var board1 = querySelector('.player1');
       window.onKeyDown.listen( (e) {
-        board1.actOnKeyDown(e.keyCode);
+        board1.actOnKeyDown(new String.fromCharCodes([e.keyCode]));
       });
       window.onKeyUp.listen( (e) {
         board1.moveFreeze = -1; //FIXME: WIP multiple pressed keys
@@ -22,23 +22,6 @@ main() {
     });
   });
 }
-
-
-// enum Controls { //TODO use enums: new in dart 1.8.0. Got some issues :-/
-//     up, down, left ,right, action
-// }
-class Controls {
-  static const up = 0;
-  static const down = 1;
-  static const left = 2;
-  static const right = 3;
-  static const action = 4;
-
-  static get values => [up, down, left, right, action];
-  final int value;
-  const Controls._(this.value);
-}
-
 
 class States {
   static const still = const States._(0);
@@ -51,23 +34,8 @@ class States {
   const States._(this.value);
 }
 
-
 @CustomTag('panepond-board')
 class Board extends PolymerElement {
-  Map<num, num> controls = { // all caps!
-    Controls.up: KeyCode.I,
-    Controls.down: KeyCode.K,
-    Controls.left: KeyCode.J,
-    Controls.right: KeyCode.L,
-    Controls.action: KeyCode.Q,
-  };
-  @observable Map<num, String> controlsChars = toObservable( {
-    Controls.up: "I",
-    Controls.down: "K",
-    Controls.left: "J",
-    Controls.right: "L",
-    Controls.action: "Q",
-  });
   Map rules = {
     "min_matching_length": 3,
   };
@@ -112,8 +80,7 @@ class Board extends PolymerElement {
 
   void updateKey(num control) {
     window.onKeyDown.first.then((e) {
-      controls[control] = e.keyCode;
-      controlsChars[control] = new String.fromCharCodes([e.keyCode]);
+      config.controls[control] = new String.fromCharCodes([e.keyCode]);
     });
   }
 
@@ -131,19 +98,22 @@ class Board extends PolymerElement {
     resolveMatchesInit();
   }
 
-  void actOnKeyDown(keyCode) {
-    if (cursorLock || !controls.containsValue(keyCode)) return;
+//TODO: tl;dr Use keyCodes instead of their string conversion.
+//For reasom there is `fromCharCodes` but couldn't find anything like `toCharCodes` which worked.
+//Hastily tried `charCodeAt` and just `charCodes` much without success.
+  void actOnKeyDown(char) {
+    if (cursorLock || !config.controls.containsValue(char)) return;
 
-    if (keyCode == controls[Controls.up]) {
+    if (char == config.controls[Controls.up]) {
       moveCursor("y", max(0, cursor["y"] -1), Controls.up);
-    } else if (keyCode == controls[Controls.down]) {
+    } else if (char == config.controls[Controls.down]) {
       moveCursor("y", min(config.height -cursor["height"], cursor["y"] +1), Controls.down);
-    } else if (keyCode == controls[Controls.left]) {
+    } else if (char == config.controls[Controls.left]) {
       moveCursor("x", max(0, cursor["x"] -1), Controls.left);
-    } else if (keyCode == controls[Controls.right]) {
+    } else if (char == config.controls[Controls.right]) {
       moveCursor("x", min(config.width -cursor["width"], cursor["x"] +1), Controls.right);
     }
-    else if (keyCode == controls[Controls.action]) {
+    else if (char == config.controls[Controls.action]) {
       Map <String, num> pos1, pos2;
       pos1 = {"x": cursor["x"], "y": cursor["y"]};
       pos2 = {"x": cursor["x"]+1, "y": cursor["y"]};

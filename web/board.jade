@@ -41,7 +41,7 @@ polymer-element(name="panepond-board")
         input.update(type='button', value="right" on-click="{{updateKeyRight}}")
         input.update(type='button', value="left" on-click="{{updateKeyLeft}}")
         input.update(type='button', value="action" on-click="{{updateKeyAction}}")
-        p Type {{controlsChars[0]}} {{controlsChars[1]}} {{controlsChars[2]}} {{controlsChars[3]}} to move around. Press {{controlsChars[4]}} for action
+        p Type {{config.controls["0"]}} {{config.controls["1"]}} {{config.controls["2"]}} {{config.controls["3"]}} to move around. Press {{config.controls["4"]}} for action
 
     .board.ti(style='font-size:{{config.tileSize}}px')
       template(repeat="{{col in columns | enumerate}}")
