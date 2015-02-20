@@ -36,9 +36,6 @@ class States {
 
 @CustomTag('panepond-board')
 class Board extends PolymerElement {
-  Map rules = {
-    "min_matching_length": 3,
-  };
   static var rand = new Random(1234);
   @observable Map<String, num> cursor = toObservable({
     "x": 3,
@@ -159,7 +156,7 @@ class Board extends PolymerElement {
 
   void resolveMatchesInit() { //FIXME: this is very naive -- but it is only run at init
     List <Map <String, num>> tiles = range(0, config.width*config.height).map((i) => {"x": (i/config.height).floor(), "y": i%config.height});
-    var matches = getMatches(tiles, rules);
+    var matches = getMatches(tiles);
     if (matches.length == 0) return;
 
     for(var m in matches) {
@@ -172,7 +169,7 @@ class Board extends PolymerElement {
   }
 
   void resolveMatches(List <Map <String, num>> candidatePositions, num multiplier, num accumScore) {
-    List <List <Map <String, num>>> matches = getMatches(candidatePositions, rules);
+    List <List <Map <String, num>>> matches = getMatches(candidatePositions);
     if (matches.length == 0) {
       totalScore += accumScore * (multiplier -1);
       return;
@@ -180,11 +177,11 @@ class Board extends PolymerElement {
 
     List <Map <String, num>> tilePositions = matches.expand((i) => i).toList(); // flatten
     if (multiplier == 1) { // the first match treats all tilePositions as the same "combo"
-      accumScore = tilePositions.length == rules["min_matching_length"]? 2:tilePositions.length;
+      accumScore = tilePositions.length == config.rules["min_matching_length"]? 2:tilePositions.length;
       showEffects(tilePositions, accumScore, multiplier++).then((tile) => clearEffects(tile));
     } else { // in a cumulative combo, combinations score on their own (and add to the multiplier)
       for (var m in matches) {
-        num comboScore = m.length == rules["min_matching_length"]? 2:m.length;
+        num comboScore = m.length == config.rules["min_matching_length"]? 2:m.length;
         accumScore += comboScore;
         showEffects(m, comboScore, multiplier++).then((tile) => clearEffects(tile));
       }
@@ -200,7 +197,7 @@ class Board extends PolymerElement {
       .then((positions) => resolveMatches(positions, multiplier, accumScore));
   }
 
-  List <List<Map <String, num>>> getMatches(List <Map <String, num>> tiles, rules) { //TODO: scan only needed elements
+  List <List<Map <String, num>>> getMatches(List <Map <String, num>> tiles) { //TODO: scan only needed elements
     Map <String, bool> scanned = {};
     var matchedTiles = [];
     for(var t in tiles) {
@@ -221,14 +218,14 @@ class Board extends PolymerElement {
           if (c.type == prevType && c.type > 0) { //TODO: use states
             accumTiles.add({"x": c.x, "y": c.y});
           } else {
-            if (accumTiles.length >= rules["min_matching_length"]) {
+            if (accumTiles.length >= config.rules["min_matching_length"]) {
               matchedTiles.add(accumTiles);
             }
             accumTiles = [{"x": c.x, "y": c.y}];
             prevType = c.type;
           }
         }
-        if (accumTiles.length >= rules["min_matching_length"]) {
+        if (accumTiles.length >= config.rules["min_matching_length"]) {
           matchedTiles.add(accumTiles);
         }
       }

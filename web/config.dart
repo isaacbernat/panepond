@@ -22,6 +22,7 @@ class Config extends Observable {
       "effects": new Duration(milliseconds: 1800),
     };
     @observable String jsonDump = "";
+    Map rules = {"min_matching_length": 3,};
 
     @observable Map<num, String> controls = toObservable( {
       Controls.up: "I",
@@ -51,6 +52,7 @@ class Config extends Observable {
         "delays": delays,
         "random-seed": randomSeed,
         "controls": controls,
+        "rules": rules,
       });
     }
 
@@ -63,6 +65,7 @@ class Config extends Observable {
       delays = tmp["delays"] != null?toObservable(tmp["delays"]):delays;
       delays.forEach((k, v) => delayDurations[k] = new Duration(milliseconds: int.parse(v)));
       controls = tmp["controls"] != null?toObservable(tmp["controls"]):controls;
+      rules = tmp["rules"] != null?toObservable(tmp["rules"]):controls;
     }
 }
 
