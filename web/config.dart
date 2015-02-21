@@ -22,7 +22,13 @@ class Config extends Observable {
       "effects": new Duration(milliseconds: 1800),
     };
     @observable String jsonDump = "";
-    Map rules = {"min_matching_length": 3,};
+    Map rules = {
+      "min_matching_length": 3,
+      "scores": {
+        "3": 2, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10,
+        "11": 11, "12": 12, "13": 13, "14": 14,
+      }
+    };
 
     @observable Map<num, String> controls = toObservable( {
       Controls.up: "I",
