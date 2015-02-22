@@ -14,10 +14,10 @@ polymer-element(name="panepond-board")
       div
         h4 board dimensions (in tiles)
         label height
-        input(type='number', value="{{config.height}}")
+        input(type='number', value="{{config.inputHeight}}")
         label width
-        input(type='number', value="{{config.width}}")
-        input.update(type='button', value="update" on-click="{{updateConfig}}")
+        input(type='number', value="{{config.inputWidth}}")
+        input.update(type='button', value="update" on-click="{{updateDimensions}}")
       div
         label tile size
         input(type='number', value="{{config.tileSize}}")
