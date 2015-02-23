@@ -7,33 +7,46 @@ polymer-element(name="panepond-board")
     label score: {{totalScore}}
 
     .config(style='display:{{config.display}}')
+      h3 Configuration
       div
+        p You can use the input fields to configure the game in various ways.
+        p For a more comprehensive list of configurable elements use the JSON export/import tool above and modify the values at your own pleasure.
+        p Use the toggle config button to hide and show it.
+
         textarea(rows='4', cols="50" value="{{config.jsonDump}}")
-        input.update(type='button', value="export config" on-click="{{exportConfig}}")
-        input.update(type='button', value="import config" on-click="{{importConfig}}")
+        input.update(type='button', value="export" on-click="{{exportConfig}}")
+        input.update(type='button', value="import" on-click="{{importConfig}}")
       div
-        h4 board dimensions (in tiles)
-        label height
-        input(type='number', value="{{config.inputHeight}}")
-        label width
-        input(type='number', value="{{config.inputWidth}}")
-        input.update(type='button', value="update" on-click="{{updateDimensions}}")
+        span
+          h4 board dimensions (in tiles)
+          label height
+          input(type='number', value="{{config.inputHeight}}")
+          label width
+          input(type='number', value="{{config.inputWidth}}")
+          input.update(type='button', value="update" on-click="{{updateDimensions}}")
       div
-        label tile size
-        input(type='number', value="{{config.tileSize}}")
-        label random seed
-        input(type='number', value="{{config.randomSeed}}")
-        input.update(type='button', value="generate" on-click="{{generateRandomSeed}}")
-        input.update(type='button', value="update" on-click="{{updateRandomSeed}}")
+        h4 misc
+        span
+          label tile size
+          input(type='number', value="{{config.tileSize}}")
+        span
+          label rand seed
+          input(type='number', value="{{config.randomSeed}}")
+          input.update(type='button', value="generate" on-click="{{generateRandomSeed}}")
+          input.update(type='button', value="update" on-click="{{updateRandomSeed}}")
       div
-        h4 delays (in milliseconds)
-        label swap
-        input(type='number', value="{{config.delays['swap']}}")
-        label resolve
-        input(type='number', value="{{config.delays['resolve']}}")
-        label effects
-        input(type='number', value="{{config.delays['effects']}}")
-        input.update(type='button', value="update" on-click="{{updateDelays}}")
+        span
+          h4 delays (in milliseconds)
+          span
+            label swap
+            input(type='number', value="{{config.delays['swap']}}")
+          span
+            label resolve
+            input(type='number', value="{{config.delays['resolve']}}")
+          span
+            label effects
+            input(type='number', value="{{config.delays['effects']}}")
+          input.update(type='button', value="update" on-click="{{updateDelays}}")
       div
         h4 Click button and press key to change controls
         input.update(type='button', value="up" on-click="{{updateKeyUp}}")
