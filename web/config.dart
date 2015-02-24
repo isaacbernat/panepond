@@ -27,7 +27,8 @@ class Config extends Observable {
       "scores": {
         "3": 2, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10,
         "11": 11, "12": 12, "13": 13, "14": 14,
-      }
+      },
+      "multiplier_increment": 1
     };
 
     @observable Map<num, String> controls = toObservable( {

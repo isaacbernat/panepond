@@ -171,19 +171,21 @@ class Board extends PolymerElement {
   void resolveMatches(List <Map <String, num>> candidatePositions, num multiplier, num accumScore) {
     List <List <Map <String, num>>> matches = getMatches(candidatePositions);
     if (matches.length == 0) {
-      totalScore += accumScore * (multiplier -1);
+      totalScore += accumScore * (multiplier -config.rules["multiplier_increment"]);
       return;
     }
 
     List <Map <String, num>> tilePositions = matches.expand((i) => i).toList(); // flatten
     if (multiplier == 1) { // the first match treats all tilePositions as the same "combo"
       accumScore = config.rules["scores"][tilePositions.length.toString()];  // TODO it'd be nicer with nums
-      showEffects(tilePositions, accumScore, multiplier++).then((tile) => clearEffects(tile));
+      showEffects(tilePositions, accumScore, multiplier).then((tile) => clearEffects(tile));
+      multiplier += config.rules["multiplier_increment"];
     } else { // in a cumulative combo, combinations score on their own (and add to the multiplier)
       for (var m in matches) {
         num comboScore = config.rules["scores"][m.length.toString()];
         accumScore += comboScore;
-        showEffects(m, comboScore, multiplier++).then((tile) => clearEffects(tile));
+        showEffects(m, comboScore, multiplier).then((tile) => clearEffects(tile));
+        multiplier += config.rules["multiplier_increment"];
       }
     }
 
