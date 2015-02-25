@@ -89,10 +89,13 @@ class Board extends PolymerElement {
 
   void init() {
     totalScore = 0;
-    columns = toObservable(range(0, config.width).map((i) => range(0, config.height).map((j) => j < 3 ? new Tile(0, i, j) : new Tile(rand.nextInt(6) + 1, i, j))));
+    var numSymbols = config.rules["tile_symbols"].length -1;
+    columns = toObservable(range(0, config.width).map((i) => range(0, config.height).map((j) => j < 3 ? new Tile("0", i, j) : new Tile((rand.nextInt(numSymbols) +1).toString(), i, j))));
     columnEffects = toObservable(range(0, config.width).map((j) => range(0, config.height).map((i) => " ")));
     leftMarginOffset = config.width * -1;
-    resolveMatchesInit();
+
+    List <Map <String, num>> tiles = range(0, config.width*config.height).map((i) => {"x": (i/config.height).floor(), "y": i%config.height});
+    resolveMatches(tiles, 0, 0);
   }
 
 //TODO: tl;dr Use keyCodes instead of their string conversion.
@@ -154,20 +157,6 @@ class Board extends PolymerElement {
     }
   }
 
-  void resolveMatchesInit() { //FIXME: this is very naive -- but it is only run at init
-    List <Map <String, num>> tiles = range(0, config.width*config.height).map((i) => {"x": (i/config.height).floor(), "y": i%config.height});
-    var matches = getMatches(tiles);
-    if (matches.length == 0) return;
-
-    for(var m in matches) {
-      for(var tile in m) {
-        this.columns[tile["x"]][tile["y"]].type = 0;
-      }
-      gravity(m);
-    }
-    resolveMatchesInit();
-  }
-
   void resolveMatches(List <Map <String, num>> candidatePositions, num multiplier, num accumScore) {
     List <List <Map <String, num>>> matches = getMatches(candidatePositions);
     if (matches.length == 0) {
@@ -214,10 +203,10 @@ class Board extends PolymerElement {
         } else /* if (axis == "y") */{
           candidates = this.columns.map((col) => col[t["y"]]);
         }
-        num prevType = -1;
+        num prevType = "-1";
         List <Map <String, num>> accumTiles = [];
         for(var c in candidates){
-          if (c.type == prevType && c.type > 0) { //TODO: use states
+          if (c.type == prevType && c.type != "0") { //TODO: use states
             accumTiles.add({"x": c.x, "y": c.y});
           } else {
             if (accumTiles.length >= config.rules["min_matching_length"]) {
@@ -239,7 +228,7 @@ class Board extends PolymerElement {
     List <Map <String, num>> tiles = [];
     for (var m in matches) {
       for(var tile in m) {
-        this.columns[tile["x"]][tile["y"]].type = 0;
+        this.columns[tile["x"]][tile["y"]].type = "0";
       }
       tiles.addAll(m);
     }
@@ -252,14 +241,14 @@ class Board extends PolymerElement {
     List <Map <String, num>> gravityPositions = [];
     for(var c in columns) {
       for (var i = len -1; i > 0; i--) {
-        if(this.columns[c][i].type == 0 && this.columns[c][i].state == States.still) {
-          num highestType = 0;
+        if(this.columns[c][i].type == "0" && this.columns[c][i].state == States.still) {
+          num highestType = "0";
           for (var j = i; j > 1; j--) {
-            highestType = max(highestType, this.columns[c][j-1].type);
+            highestType = highestType != "0"? highestType : this.columns[c][j-1].type;
             this.columns[c][j].type = this.columns[c][j-1].type;
           }
-          if(highestType > 0) {
-            this.columns[c][0].type = 0;
+          if(highestType != "0") {
+            this.columns[c][0].type = "0";
             gravity([{"x": c}]); //TODO: non-instant gravity?
             gravityPositions.add({"x": c, "y": i});
           }
@@ -303,20 +292,10 @@ class Board extends PolymerElement {
 }
 
 class Tile extends Observable {
-  @observable num type;
+  @observable String type;
   @observable num x;
   @observable num y;
   String effect = " ";
   num state = States.still;
-  Map<int, String> symbols = {
-    0: " ",
-    1: "♠",
-    2: "♥",
-    3: "♦",
-    4: "♣",
-    5: "★",
-    6: "■"
-  };
-
-  Tile(number, x, y) : type = number, x = x, y = y;
+  Tile(index, x, y) : type = index, x = x, y = y;
 }

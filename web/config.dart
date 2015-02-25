@@ -28,7 +28,10 @@ class Config extends Observable {
         "3": 2, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10,
         "11": 11, "12": 12, "13": 13, "14": 14,
       },
-      "multiplier_increment": 1
+      "multiplier_increment": 1,
+      "tile_symbols": {
+        "0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "★", "6": "■"
+      }
     };
 
     @observable Map<num, String> controls = toObservable( {
@@ -40,16 +43,6 @@ class Config extends Observable {
     });
 
     Config(w, h, ts) : width = w, height = h, tileSize = ts, inputWidth=w.toString(), inputHeight=h.toString();
-
-    Config longConstructor(w, h, ts, r, d) {
-      width = w;
-      height = h;
-      inputWidth=w.toString();
-      inputHeight=h.toString();
-      tileSize = ts;
-      randomSeed = r;
-      delays = toObservable(d);
-    }
 
     String export() {
       return JSON.encode({
