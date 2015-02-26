@@ -95,7 +95,19 @@ class Board extends PolymerElement {
     leftMarginOffset = config.width * -1;
 
     List <Map <String, num>> tiles = range(0, config.width*config.height).map((i) => {"x": (i/config.height).floor(), "y": i%config.height});
-    resolveMatches(tiles, 0, 0);
+    var durations = config.delayDurations;
+    config.delayDurations = {
+      "resolve": new Duration(milliseconds: 0),
+      "effects": new Duration(milliseconds: 0),
+    };
+    resolveMatches(tiles, 0, 0)
+      .then((_) => restoreDelaysAndScore(durations));
+  }
+
+  void restoreDelaysAndScore(durations) {
+    config.delayDurations = durations;
+    totalScore = 0;
+    return;
   }
 
 //TODO: tl;dr Use keyCodes instead of their string conversion.
@@ -157,7 +169,7 @@ class Board extends PolymerElement {
     }
   }
 
-  void resolveMatches(List <Map <String, num>> candidatePositions, num multiplier, num accumScore) {
+  Future resolveMatches(List <Map <String, num>> candidatePositions, num multiplier, num accumScore) {
     List <List <Map <String, num>>> matches = getMatches(candidatePositions);
     if (matches.length == 0) {
       totalScore += accumScore * (multiplier -config.rules["multiplier_increment"]);
@@ -183,7 +195,7 @@ class Board extends PolymerElement {
     new Future.delayed(config.delayDurations["resolve"], () => tiles)
       .then((tiles) => changeState(tiles, States.still));
 
-    clearMatches(matches)
+    return clearMatches(matches)
       .then((positions) => gravity(positions))
       .then((positions) => resolveMatches(positions, multiplier, accumScore));
   }
