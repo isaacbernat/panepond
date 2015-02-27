@@ -7,25 +7,8 @@ polymer-element(name="panepond-board")
     label score: {{totalScore}}
 
     .config(style='display:{{config.display}}')
-      h3 Configuration
       div
-        p You can use the input fields to configure the game in various ways.
-        p For a more comprehensive list of configurable elements use the JSON export/import tool above and modify the values at your own pleasure.
-        p Use the toggle config button to hide and show it.
-
-        textarea(rows='4', cols="50" value="{{config.jsonDump}}")
-        input.update(type='button', value="export" on-click="{{exportConfig}}")
-        input.update(type='button', value="import" on-click="{{importConfig}}")
-      div
-        span
-          h4 board dimensions (in tiles)
-          label height
-          input(type='number', value="{{config.inputHeight}}")
-          label width
-          input(type='number', value="{{config.inputWidth}}")
-          input.update(type='button', value="update" on-click="{{updateDimensions}}")
-      div
-        h4 misc
+        p Use the toggle button to hide and show configuration options.
         span
           label tile size
           input(type='number', value="{{config.tileSize}}")
@@ -34,20 +17,6 @@ polymer-element(name="panepond-board")
           input(type='number', value="{{config.randomSeed}}")
           input.update(type='button', value="generate" on-click="{{generateRandomSeed}}")
           input.update(type='button', value="update" on-click="{{updateRandomSeed}}")
-      div
-        span
-          h4 delays (in milliseconds)
-          span
-            label swap
-            input(type='number', value="{{config.delays['swap']}}")
-          span
-            label resolve
-            input(type='number', value="{{config.delays['resolve']}}")
-          span
-            label effects
-            input(type='number', value="{{config.delays['effects']}}")
-          input.update(type='button', value="update" on-click="{{updateDelays}}")
-      div
         h4 Click button and press key to change controls
         input.update(type='button', value="up" on-click="{{updateKeyUp}}")
         input.update(type='button', value="down" on-click="{{updateKeyDown}}")
@@ -55,6 +24,12 @@ polymer-element(name="panepond-board")
         input.update(type='button', value="left" on-click="{{updateKeyLeft}}")
         input.update(type='button', value="action" on-click="{{updateKeyAction}}")
         p Type {{config.controls["0"]}} {{config.controls["1"]}} {{config.controls["2"]}} {{config.controls["3"]}} to move around. Press {{config.controls["4"]}} for action
+      div
+        p For a more comprehensive configuration use the JSON export/import tool below and modify the values at your own pleasure.
+
+        textarea(rows='15', cols="50" value="{{config.jsonDump}}")
+        input.update(type='button', value="export" on-click="{{exportConfig}}")
+        input.update(type='button', value="import" on-click="{{importConfig}}")
 
     .board.ti(style='font-size:{{config.tileSize}}px')
       template(repeat="{{col in columns | enumerate}}")

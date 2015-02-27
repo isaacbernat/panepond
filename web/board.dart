@@ -54,22 +54,13 @@ class Board extends PolymerElement {
   @observable num leftMarginOffset;
 
   void toggleConfig() => config.display == "none" ? config.display = "block" : config.display = "none";
-  void updateDelays() {
-    config.delays.forEach((k, v) => config.delayDurations[k] = new Duration(milliseconds: int.parse(v)));
-    init();
-  }
-
   void exportConfig() => config.jsonDump = config.export();
-  void importConfig() => config.import(config.jsonDump);
-
-  void updateDimensions() {
-    config.height = int.parse(config.inputHeight);
-    config.width = int.parse(config.inputWidth);
+  void importConfig() {
+    config.import(config.jsonDump);
     init();
   }
 
   void generateRandomSeed() => config.randomSeed = rand.nextInt(999999).toString();
-
   void updateRandomSeed() {
     rand = new Random(int.parse(config.randomSeed));
     init();
@@ -80,7 +71,6 @@ class Board extends PolymerElement {
       config.controls[control] = new String.fromCharCodes([e.keyCode]);
     });
   }
-
   void updateKeyUp() => updateKey(Controls.up);
   void updateKeyDown() => updateKey(Controls.down);
   void updateKeyRight() => updateKey(Controls.right);
