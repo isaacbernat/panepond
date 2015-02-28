@@ -35,7 +35,7 @@ polymer-element(name="panepond-board")
       template(repeat="{{col in columns | enumerate}}")
         .col
           template(repeat="{{tile in col.value | enumerate}}")
-            .tile(class="type{{tile.value.type}}" pos="{{col.index}},{{tile.index}}") {{config.rules["tile_symbols"][tile.value.type]}}
+            .tile(pos="{{col.index}},{{tile.index}}" style="background:{{config.tiles['colours'][tile.value.type]}}") {{config.tiles["symbols"][tile.value.type]}}
 
     .board.cu(style='margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px')
       template(repeat="{{col in columns | enumerate}}")

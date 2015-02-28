@@ -79,7 +79,7 @@ class Board extends PolymerElement {
 
   void init() {
     totalScore = 0;
-    var numSymbols = config.rules["tile_symbols"].length -1;
+    var numSymbols = config.tiles["symbols"].length -1;
     columns = toObservable(range(0, config.width).map((i) => range(0, config.height).map((j) => j < 3 ? new Tile("0", i, j) : new Tile((rand.nextInt(numSymbols) +1).toString(), i, j))));
     columnEffects = toObservable(range(0, config.width).map((j) => range(0, config.height).map((i) => " ")));
     leftMarginOffset = config.width * -1;

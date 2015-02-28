@@ -29,11 +29,11 @@ class Config extends Observable {
         "11": 11, "12": 12, "13": 13, "14": 14,
       },
       "multiplier_increment": 1,
-      "tile_symbols": {
-        "0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "★", "6": "■"
-      }
     };
-
+    Map tiles = {
+      "symbols": {"0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "★", "6": "■"},
+      "colours": {"0": "black", "1": "red", "2": "green", "3": "blue", "4": "cyan", "5": "magenta", "6": "yellow"}
+    };
     @observable Map<num, String> controls = toObservable( {
       Controls.up: "I",
       Controls.down: "K",
@@ -53,6 +53,7 @@ class Config extends Observable {
         "random-seed": randomSeed,
         "controls": controls,
         "rules": rules,
+        "tiles": tiles,
       });
     }
 
@@ -65,7 +66,8 @@ class Config extends Observable {
       delays = tmp["delays"] != null?toObservable(tmp["delays"]):delays;
       delays.forEach((k, v) => delayDurations[k] = new Duration(milliseconds: int.parse(v)));
       controls = tmp["controls"] != null?toObservable(tmp["controls"]):controls;
-      rules = tmp["rules"] != null?toObservable(tmp["rules"]):controls;
+      rules = tmp["rules"] != null?toObservable(tmp["rules"]):rules;
+      tiles = tmp["tiles"] != null?toObservable(tmp["tiles"]):tiles;
     }
 }
 
