@@ -140,7 +140,7 @@ class Board extends PolymerElement {
     Tile t2 = this.columns[pos2["x"]][pos2["y"]];
     if (t1.state != States.still || t2.state != States.still) return;
 
-    num tmpType = t1.type;
+    String tmpType = t1.type;
     t1.type = t2.type;
     t1.state = States.swap;
     t2.type = tmpType;
@@ -205,7 +205,7 @@ class Board extends PolymerElement {
         } else /* if (axis == "y") */{
           candidates = this.columns.map((col) => col[t["y"]]);
         }
-        num prevType = "-1";
+        String prevType = "-1";
         List <Map <String, num>> accumTiles = [];
         for(var c in candidates){
           if (c.type == prevType && c.type != "0") { //TODO: use states
@@ -244,7 +244,7 @@ class Board extends PolymerElement {
     for(var c in columns) {
       for (var i = len -1; i > 0; i--) {
         if(this.columns[c][i].type == "0" && this.columns[c][i].state == States.still) {
-          num highestType = "0";
+          String highestType = "0";
           for (var j = i; j > 1; j--) {
             highestType = highestType != "0"? highestType : this.columns[c][j-1].type;
             this.columns[c][j].type = this.columns[c][j-1].type;
