@@ -208,7 +208,7 @@ class Board extends PolymerElement {
         String prevType = "-1";
         List <Map <String, num>> accumTiles = [];
         for(var c in candidates){
-          if (c.type == prevType && c.type != "0") { //TODO: use states
+          if (c.type == prevType && int.parse(c.type) > 0) { //TODO: use states
             accumTiles.add({"x": c.x, "y": c.y});
           } else {
             if (accumTiles.length >= config.rules["min_matching_length"]) {
@@ -244,12 +244,12 @@ class Board extends PolymerElement {
     for(var c in columns) {
       for (var i = len -1; i > 0; i--) {
         if(this.columns[c][i].type == "0" && this.columns[c][i].state == States.still) {
-          String highestType = "0";
+          bool emptyAbove = true;
           for (var j = i; j > 1; j--) {
-            highestType = highestType != "0"? highestType : this.columns[c][j-1].type;
+            emptyAbove = this.columns[c][j-1].type != "0" || emptyAbove;
             this.columns[c][j].type = this.columns[c][j-1].type;
           }
-          if(highestType != "0") {
+          if(!emptyAbove) {
             this.columns[c][0].type = "0";
             gravity([{"x": c}]); //TODO: non-instant gravity?
             gravityPositions.add({"x": c, "y": i});
