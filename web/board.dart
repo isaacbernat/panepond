@@ -244,12 +244,12 @@ class Board extends PolymerElement {
     for(var c in columns) {
       for (var i = len -1; i > 0; i--) {
         if(this.columns[c][i].type == "0" && this.columns[c][i].state == States.still) {
-          bool emptyAbove = true;
+          bool foundNonEmpty = false;
           for (var j = i; j > 1; j--) {
-            emptyAbove = this.columns[c][j-1].type != "0" || emptyAbove;
+            foundNonEmpty = this.columns[c][j-1].type != "0" || foundNonEmpty;
             this.columns[c][j].type = this.columns[c][j-1].type;
           }
-          if(!emptyAbove) {
+          if(foundNonEmpty) {
             this.columns[c][0].type = "0";
             gravity([{"x": c}]); //TODO: non-instant gravity?
             gravityPositions.add({"x": c, "y": i});
