@@ -1,0 +1,2 @@
+.board{border:0}.col{float:left}.tile{width:1em;height:1em;line-height:1em;text-align:center;color:gray}.board.cu{float:left;z-index:10}.board.ef{float:left;z-index:10}.board.ef .tile{color:#fff}.cursor{outline:0.2em dashed #d3d3d3;outline-offset:-0.1em}.config{width:25em}.config div{margin-top:0.5em;border:1px dotted #001a1a}.config h4{margin-bottom:0}.config span{display:block}.config label{display:inline-block;min-width:4em}.config input{max-width:5em}
+/*# sourceMappingURL=board.css.map */
