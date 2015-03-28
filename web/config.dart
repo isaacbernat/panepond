@@ -11,7 +11,7 @@ class Config extends Observable {
     @observable Map <String, num> delays = toObservable({
       "swap": "120",
       "resolve": "1800",
-      "effects": "1800",
+      "score_effects": "1800",
     });
     @observable String randomSeed = "1234";
     num height;
@@ -19,7 +19,7 @@ class Config extends Observable {
     Map <String, Duration> delayDurations = {
       "swap": new Duration(milliseconds: 120),
       "resolve": new Duration(milliseconds: 1800),
-      "effects": new Duration(milliseconds: 1800),
+      "score_effects": new Duration(milliseconds: 1800),
     };
     @observable String jsonDump = "";
     Map rules = {
@@ -34,6 +34,11 @@ class Config extends Observable {
       "symbols": {"0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "★", "6": "■"},
       "colours": {"0": "black", "1": "red", "2": "green", "3": "blue", "4": "cyan", "5": "magenta", "6": "yellow"}
     };
+    Map effects = {
+      "score_effects": true,
+      "resolve_effects": true, //TODO this is going to be updated with more complex/custom stuff
+    };
+
     @observable Map<num, String> controls = toObservable( {
       Controls.up: "I",
       Controls.down: "K",
@@ -54,6 +59,7 @@ class Config extends Observable {
         "controls": controls,
         "rules": rules,
         "tiles": tiles,
+        "effects": effects,
       });
     }
 
@@ -68,6 +74,7 @@ class Config extends Observable {
       controls = tmp["controls"] != null?toObservable(tmp["controls"]):controls;
       rules = tmp["rules"] != null?toObservable(tmp["rules"]):rules;
       tiles = tmp["tiles"] != null?toObservable(tmp["tiles"]):tiles;
+      effects = tmp["effects"] != null?toObservable(tmp["effects"]):effects;
     }
 }
 

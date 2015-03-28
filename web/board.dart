@@ -88,7 +88,7 @@ class Board extends PolymerElement {
     var durations = config.delayDurations;
     config.delayDurations = {
       "resolve": new Duration(milliseconds: 0),
-      "effects": new Duration(milliseconds: 0),
+      "score_effects": new Duration(milliseconds: 0),
     };
     resolveMatches(tiles, 0, 0)
       .then((_) => restoreDelaysAndScore(durations));
@@ -169,13 +169,13 @@ class Board extends PolymerElement {
     List <Map <String, num>> tilePositions = matches.expand((i) => i).toList(); // flatten
     if (multiplier == 1) { // the first match treats all tilePositions as the same "combo"
       accumScore = config.rules["scores"][tilePositions.length.toString()];  // TODO it'd be nicer with nums
-      showEffects(tilePositions, accumScore, multiplier).then((tile) => clearEffects(tile));
+      scoreEffects(tilePositions, accumScore, multiplier).then((tile) => clearEffects(tile));
       multiplier += config.rules["multiplier_increment"];
     } else { // in a cumulative combo, combinations score on their own (and add to the multiplier)
       for (var m in matches) {
         num comboScore = config.rules["scores"][m.length.toString()];
         accumScore += comboScore;
-        showEffects(m, comboScore, multiplier).then((tile) => clearEffects(tile));
+        scoreEffects(m, comboScore, multiplier).then((tile) => clearEffects(tile));
         multiplier += config.rules["multiplier_increment"];
       }
     }
@@ -261,8 +261,8 @@ class Board extends PolymerElement {
     return positions..addAll(gravityPositions);
   }
 
-  Future showEffects(List <Map <String, num>> tiles, num comboScore, num multiplier) {
-    if(comboScore == 0 && multiplier == 1){
+  Future scoreEffects(List <Map <String, num>> tiles, num comboScore, num multiplier) {
+    if(!config.effects["score_effects"] || (comboScore == 0 && multiplier == 1)){
       return new Future(() => [-1, -1]);
     }
     num maxX = 0, minX = 9999, maxY = 0, minY = 9999; //TODO: non-magic numbers
@@ -283,7 +283,7 @@ class Board extends PolymerElement {
       effect = "+" + comboScore.toString();
     }
     this.columnEffects[minX][minY] = effect;
-    return new Future.delayed(config.delayDurations["effects"], () => [minX, minY]);
+    return new Future.delayed(config.delayDurations["score_effects"], () => [minX, minY]);
   }
 
   void clearEffects(List<num> coordinates) {
