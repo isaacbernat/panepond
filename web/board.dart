@@ -145,6 +145,12 @@ class Board extends PolymerElement {
     t1.state = States.swap;
     t2.type = tmpType;
     t2.state = States.swap;
+    if(config.effects["swap_effects"]){
+      this.columnEffects[t1.x][t1.y] = "⇥";
+      this.columnEffects[t2.x][t2.y] = "⇤";
+    }
+  new Future.delayed(config.delayDurations["swap"], () => [[pos1["x"], pos1["y"]], [pos2["x"], pos2["y"]]])
+      .then((coordinatesList) => clearEffects(coordinatesList));
     new Future.delayed(config.delayDurations["swap"], () => [t1, t2])
       .then((tiles) => changeState(tiles, States.still));
     new Future.delayed(config.delayDurations["swap"], () => [pos1, pos2])
@@ -169,13 +175,13 @@ class Board extends PolymerElement {
     List <Map <String, num>> tilePositions = matches.expand((i) => i).toList(); // flatten
     if (multiplier == 1) { // the first match treats all tilePositions as the same "combo"
       accumScore = config.rules["scores"][tilePositions.length.toString()];  // TODO it'd be nicer with nums
-      scoreEffects(tilePositions, accumScore, multiplier).then((tile) => clearEffects(tile));
+      scoreEffects(tilePositions, accumScore, multiplier).then((tile) => clearEffects([tile]));
       multiplier += config.rules["multiplier_increment"];
     } else { // in a cumulative combo, combinations score on their own (and add to the multiplier)
       for (var m in matches) {
         num comboScore = config.rules["scores"][m.length.toString()];
         accumScore += comboScore;
-        scoreEffects(m, comboScore, multiplier).then((tile) => clearEffects(tile));
+        scoreEffects(m, comboScore, multiplier).then((tile) => clearEffects([tile]));
         multiplier += config.rules["multiplier_increment"];
       }
     }
@@ -286,9 +292,11 @@ class Board extends PolymerElement {
     return new Future.delayed(config.delayDurations["score_effects"], () => [minX, minY]);
   }
 
-  void clearEffects(List<num> coordinates) {
-    if (coordinates[0] > -1) {
-      this.columnEffects[coordinates[0]][coordinates[1]] = " ";
+  void clearEffects(List<List<num>> coordinatesList) {
+    for (var coordinates in coordinatesList) {
+       if (coordinates[0] > -1) {
+         this.columnEffects[coordinates[0]][coordinates[1]] = " ";
+       }
     }
   }
 }
@@ -297,7 +305,6 @@ class Tile extends Observable {
   @observable String type;
   @observable num x;
   @observable num y;
-  String effect = " ";
   num state = States.still;
   Tile(index, x, y) : type = index, x = x, y = y;
 }

@@ -37,6 +37,7 @@ class Config extends Observable {
     Map effects = {
       "score_effects": true,
       "resolve_effects": true, //TODO this is going to be updated with more complex/custom stuff
+      "swap_effects": true, //TODO this is going to be updated with more complex/custom stuff
     };
 
     @observable Map<num, String> controls = toObservable( {
