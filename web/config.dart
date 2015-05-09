@@ -32,7 +32,7 @@ class Config extends Observable {
     };
     Map tiles = {
       "symbols": {"0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "★", "6": "■"},
-      "colours": {"0": "black", "1": "red", "2": "green", "3": "blue", "4": "cyan", "5": "magenta", "6": "yellow"}
+      "colours": {"0": "darkslategray", "1": "red", "2": "green", "3": "blue", "4": "cyan", "5": "magenta", "6": "yellow"}
     };
     Map effects = {
       "score_effects": true,
