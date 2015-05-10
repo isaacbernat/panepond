@@ -35,7 +35,19 @@ polymer-element(name="panepond-board")
       template(repeat="{{col in columns | enumerate}}")
         .col
           template(repeat="{{tile in col.value | enumerate}}")
-            .tile(pos="{{col.index}},{{tile.index}}" style="background:hsla({{config.tiles['hsla'][tile.value.type]}}, {{(tile.value.type == '0')?'0%':config.tiles['hsla']['saturation']}}%, {{config.tiles['hsla']['lightness']}}%, {{config.tiles['hsla']['alpha']}})") {{config.tiles["symbols"][tile.value.type]}}
+            .tile(pos="{{col.index}},{{tile.index}}" \
+              style="background: linear-gradient(135deg, \
+                hsla( \
+                  {{config.tiles['hsla'][tile.value.type]}}, \
+                  {{(tile.value.type == '0')?'0%':config.tiles['hsla']['saturation']}}%, \
+                  {{config.tiles['hsla']['lightness']}}%, \
+                  {{config.tiles['hsla']['alpha']}}) 51%, \
+                hsla( \
+                  {{config.tiles['hsla'][tile.value.type]}}, \
+                  {{(tile.value.type == '0')?'0%':config.tiles['hsla']['saturation']}}%, \
+                  {{config.tiles['hsla']['lightness'] -10}}%, \
+                  {{config.tiles['hsla']['alpha']}}) 51%)") {{config.tiles["symbols"][tile.value.type]}}
+
 
     .board.cu(style='margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px')
       template(repeat="{{col in columns | enumerate}}")
