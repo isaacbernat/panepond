@@ -32,7 +32,8 @@ class Config extends Observable {
     };
     Map tiles = {
       "symbols": {"0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "★", "6": "■"},
-      "colours": {"0": "darkslategray", "1": "red", "2": "green", "3": "blue", "4": "cyan", "5": "magenta", "6": "yellow"},
+      "hsla": {"0": 0, "1": 0, "2": 60, "3": 120, "4": 180, "5": 240, "6": 300,
+                "saturation": 50, "lightness": 50, "alpha": 1},
       "cursor": {
         "background-color": "hsla(0, 0%, 100%, 0.5)",
         "outline": "0.2em dashed lightgray",
