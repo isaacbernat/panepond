@@ -7,7 +7,7 @@ class Config extends Observable {
     @observable String inputWidth; //x
     @observable String inputHeight; //y
     @observable String tileSize;
-    @observable String display = "block";
+    @observable String display = "none";
     @observable Map <String, num> delays = toObservable({
       "swap": "120",
       "resolve": "1800",
@@ -31,7 +31,7 @@ class Config extends Observable {
       "multiplier_increment": 1,
     };
     Map tiles = {
-      "symbols": {"0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "⭑", "6": "■"},
+      "symbols": {"0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "★", "6": "■"},
       "hsla": {"0": 0, "1": 0, "2": 60, "3": 120, "4": 180, "5": 240, "6": 300,
                 "saturation": 50, "lightness": 50, "alpha": 1},
       "cursor": {
