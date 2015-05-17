@@ -1,4 +1,3 @@
-doctype html
 link(rel="import" href="packages/polymer/polymer.html")
 
 polymer-element(name="panepond-board")
@@ -64,8 +63,8 @@ polymer-element(name="panepond-board")
         template(repeat="{{col in columns | enumerate}}")
           .col
               template(repeat="{{tile in col.value | enumerate}}")
-                .tile(style="{{(col.index >= cursor['x'] && col.index < cursor['x'] + cursor['width']\
-                            && tile.index >= cursor['y'] && tile.index < cursor['y'] + cursor['height'])? + config.tiles['cursor'] : ''}}") &nbsp;
+                .tile(class="{{(col.index >= cursor['x'] && col.index < cursor['x'] + cursor['width']\
+                            && tile.index >= cursor['y'] && tile.index < cursor['y'] + cursor['height'])? + 'cursor' : ''}}") &nbsp;
 
       .board.ef(style='margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px')
         template(repeat="{{col in columnEffects | enumerate}}")

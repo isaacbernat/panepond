@@ -78,6 +78,7 @@ class Board extends PolymerElement {
   void updateKeyAction() => updateKey(Controls.action);
 
   void init() {
+    config.loadCSS();
     totalScore = 0;
     var numSymbols = config.tiles["symbols"].length -1;
     columns = toObservable(range(0, config.width).map((i) => range(0, config.height).map((j) => j < 3 ? new Tile("0", i, j) : new Tile((rand.nextInt(numSymbols) +1).toString(), i, j))));

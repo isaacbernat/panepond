@@ -1,6 +1,7 @@
 import 'package:polymer/polymer.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'dart:html';
 
 
 class Config extends Observable {
@@ -55,6 +56,19 @@ class Config extends Observable {
     });
 
     Config(w, h, ts) : width = w, height = h, tileSize = ts, inputWidth=w.toString(), inputHeight=h.toString();
+
+    void loadCSS() {
+        StyleElement styleElement = new StyleElement();
+        document.querySelector('panepond-board.player1')
+            .shadowRoot.append(styleElement);
+        CssStyleSheet sheet = styleElement.sheet;
+        List <String> cssRules = [];
+        tiles['cursor'].forEach((k, v) {
+            cssRules.add(k + ": " + v + ";");
+        });
+        print(cssRules.join('\n'));
+        sheet.insertRule('.tile.cursor {' + cssRules.join('\n') + '}', sheet.cssRules.length);
+    }
 
     String export() {
       return JSON.encode({
