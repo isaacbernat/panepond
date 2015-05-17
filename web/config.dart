@@ -33,11 +33,17 @@ class Config extends Observable {
     };
     Map tiles = {
       "symbols": {"0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "★", "6": "■"},
-      "hsla": {
+      "colour": {
         "hue": {"0": 0, "1": 0, "2": 60, "3": 120, "4": 180, "5": 240, "6": 300},
         "saturation": 50,
         "lightness": 50,
         "alpha": 1
+      },
+      "font-colour": {
+        "hue": 0,
+        "saturation": 0,
+        "lightness": 100,
+        "alpha": 0.35
       },
       "cursor": {
         "background-color": "hsla(0, 0%, 100%, 0.5)",
@@ -72,24 +78,41 @@ class Config extends Observable {
 
         var symbolRules = {};
         tiles['symbols'].forEach((k, v) {
-          symbolRules[k] = {};
+          symbolRules[k] = {"colour": {}, "font-colour": {}};
         });
-        tiles['hsla'].forEach((k, v) {
+        tiles['colour'].forEach((k, v) {
           if(v is Map<String, num>){
             v.forEach((symbol, value) {
-              symbolRules[symbol][k] = value;
+              symbolRules[symbol]['colour'][k] = value;
             });
           } else {
             for(var symbol in tiles['symbols'].keys) {
-              symbolRules[symbol][k] = v;
+              symbolRules[symbol]['colour'][k] = v;
             }
           }
         });
+
+        tiles['font-colour'].forEach((k, v) {
+          if(v is Map<String, num>){
+            v.forEach((symbol, value) {
+              symbolRules[symbol]['font-colour'][k] = value;
+            });
+          } else {
+            for(var symbol in tiles['symbols'].keys) {
+              symbolRules[symbol]['font-colour'][k] = v;
+            }
+          }
+        });
+
         symbolRules.forEach((k, v) {
-          var h = v["hue"];
-          var s = k=='0'?0:v["saturation"];
-          var l = v["lightness"];
-          var a = v["alpha"];
+          var h = v["colour"]["hue"];
+          var s = k=='0'?0:v["colour"]["saturation"];
+          var l = v["colour"]["lightness"];
+          var a = v["colour"]["alpha"];
+          var fh = v["font-colour"]["hue"];
+          var fs = v["font-colour"]["saturation"];
+          var fl = v["font-colour"]["lightness"];
+          var fa = v["font-colour"]["alpha"];
           sheet.insertRule(
             ".tile.symbol$k {"
                 "background: linear-gradient("
@@ -97,7 +120,8 @@ class Config extends Observable {
                     "hsla($h,$s%,${(k=='0')?l-10:l+10}%,$a) 0%,"
                     "hsla($h,$s%,${(k=='0')?l-10:l}%,$a) 50%,"
                     "hsla($h,$s%,${(k=='0')?l-10:l-10}%,$a) 51%,"
-                    "hsla($h,$s%,${(k=='0')?l-10:l-2}%,$a) 100%);}"
+                    "hsla($h,$s%,${(k=='0')?l-10:l-2}%,$a) 100%);"
+                "color: hsla($fh, $fs%, $fl%, $fa);}"
             , sheet.cssRules.length);
         });
     }
