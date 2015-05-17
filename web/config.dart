@@ -33,13 +33,16 @@ class Config extends Observable {
     };
     Map tiles = {
       "symbols": {"0": " ", "1": "♠", "2": "♥", "3": "♦", "4": "♣", "5": "★", "6": "■"},
-      "hsla": {"0": 0, "1": 0, "2": 60, "3": 120, "4": 180, "5": 240, "6": 300,
-                "saturation": 50, "lightness": 50, "alpha": 1},
+      "hsla": {
+        "hue": {"0": 0, "1": 0, "2": 60, "3": 120, "4": 180, "5": 240, "6": 300},
+        "saturation": 50,
+        "lightness": 50,
+        "alpha": 1
+      },
       "cursor": {
         "background-color": "hsla(0, 0%, 100%, 0.5)",
         "outline": "0.2em dashed lightgray",
-        "outline-offset": "-0.1em"
-        }
+        "outline-offset": "-0.1em"}
     };
     Map effects = {
       "score_effects": true,
@@ -59,15 +62,44 @@ class Config extends Observable {
 
     void loadCSS() {
         StyleElement styleElement = new StyleElement();
-        document.querySelector('panepond-board.player1')
-            .shadowRoot.append(styleElement);
+        document.querySelector('panepond-board.player1').shadowRoot.append(styleElement);
         CssStyleSheet sheet = styleElement.sheet;
         List <String> cssRules = [];
         tiles['cursor'].forEach((k, v) {
-            cssRules.add(k + ": " + v + ";");
+            cssRules.add("$k: $v;");
         });
-        print(cssRules.join('\n'));
-        sheet.insertRule('.tile.cursor {' + cssRules.join('\n') + '}', sheet.cssRules.length);
+        sheet.insertRule('.tile.cursor {${cssRules.join('\n')}}', sheet.cssRules.length);
+
+        var symbolRules = {};
+        tiles['symbols'].forEach((k, v) {
+          symbolRules[k] = {};
+        });
+        tiles['hsla'].forEach((k, v) {
+          if(v is Map<String, num>){
+            v.forEach((symbol, value) {
+              symbolRules[symbol][k] = value;
+            });
+          } else {
+            for(var symbol in tiles['symbols'].keys) {
+              symbolRules[symbol][k] = v;
+            }
+          }
+        });
+        symbolRules.forEach((k, v) {
+          var h = v["hue"];
+          var s = k=='0'?0:v["saturation"];
+          var l = v["lightness"];
+          var a = v["alpha"];
+          sheet.insertRule(
+            ".tile.symbol$k {"
+                "background: linear-gradient("
+                    "135deg,"
+                    "hsla($h,$s%,${(k=='0')?l-10:l+10}%,$a) 0%,"
+                    "hsla($h,$s%,${(k=='0')?l-10:l}%,$a) 50%,"
+                    "hsla($h,$s%,${(k=='0')?l-10:l-10}%,$a) 51%,"
+                    "hsla($h,$s%,${(k=='0')?l-10:l-2}%,$a) 100%);}"
+            , sheet.cssRules.length);
+        });
     }
 
     String export() {

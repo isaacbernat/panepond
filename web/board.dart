@@ -285,9 +285,9 @@ class Board extends PolymerElement {
     }
     String effect;
     if (multiplier > 1){
-      effect = "x" + multiplier.toString();
+      effect = "x$multiplier";
     } else {
-      effect = "+" + comboScore.toString();
+      effect = "+$comboScore";
     }
     this.columnEffects[minX][minY] = effect;
     return new Future.delayed(config.delayDurations["score_effects"], () => [minX, minY]);
