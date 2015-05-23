@@ -6,8 +6,6 @@ import 'dart:math';
 
 
 class Config extends Observable {
-    @observable String inputWidth; //x
-    @observable String inputHeight; //y
     @observable String tileSize;
     @observable String display = "none";
     @observable Map <String, num> delays = toObservable({
@@ -68,7 +66,7 @@ class Config extends Observable {
       Controls.action: "Q",
     });
 
-    Config(w, h, ts) : width = w, height = h, tileSize = ts, inputWidth=w.toString(), inputHeight=h.toString();
+    Config(w, h, ts) : width = w, height = h, tileSize = ts;
 
     void randomiseSymbols(){
       if(tiles['font']["randomise-symbols"] == null) {
@@ -154,9 +152,9 @@ class Config extends Observable {
     }
 
     String export() {
-      return JSON.encode({
-        "input-width": inputWidth,
-        "input-height": inputHeight,
+      return getPrettyJSONString({
+        "width": width,
+        "height": height,
         "tile-size": tileSize,
         "delays": delays,
         "random-seed": randomSeed,
@@ -169,8 +167,8 @@ class Config extends Observable {
 
     void import(String dump) {
       var tmp = JSON.decode(dump);
-      inputWidth = tmp["input-width"] != null?tmp["input-width"]:inputWidth;
-      inputHeight = tmp["input-height"] != null?tmp["input-height"]:inputHeight;
+      width = tmp["width"] != null?tmp["width"]:width;
+      height = tmp["height"] != null?tmp["height"]:height;
       tileSize = tmp["tile-size"] != null?tmp["tile-size"]:tileSize;
       randomSeed = tmp["random-seed"] != null?tmp["random-seed"]:randomSeed;
       delays = tmp["delays"] != null?toObservable(tmp["delays"]):delays;
@@ -182,6 +180,10 @@ class Config extends Observable {
     }
 }
 
+String getPrettyJSONString(jsonObject){
+   var encoder = new JsonEncoder.withIndent("     ");
+   return encoder.convert(jsonObject);
+}
 
 //TODO check out enums? (new in dart 1.8.0.)
 class Controls { // can't use nums because otherwise the JSON encoder breaks :(
