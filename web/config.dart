@@ -2,6 +2,7 @@ import 'package:polymer/polymer.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
+import 'dart:math';
 
 
 class Config extends Observable {
@@ -39,11 +40,14 @@ class Config extends Observable {
         "lightness": 50,
         "alpha": 1
       },
-      "font-colour": {
+      "font": {
         "hue": 0,
         "saturation": 0,
         "lightness": 100,
-        "alpha": 0.35
+        "alpha": 0.35,
+        "family": "Kalocsai",
+        "randomise-symbols": "abcdefghijklmnopqrstuvwxyz0123456789",
+        "force-symbols": {"0": " "}
       },
       "cursor": {
         "background-color": "hsla(0, 0%, 100%, 0.5)",
@@ -66,6 +70,24 @@ class Config extends Observable {
 
     Config(w, h, ts) : width = w, height = h, tileSize = ts, inputWidth=w.toString(), inputHeight=h.toString();
 
+    void randomiseSymbols(){
+      if(tiles['font']["randomise-symbols"] == null) {
+        return;
+      }
+      var rng = new Random();
+      List<String> symbolPool = tiles['font']["randomise-symbols"].split(''); //must be at least as long as symbols
+      Map <String, String> newSymbols = {};
+      tiles["symbols"].forEach((k,v){
+        newSymbols[k] = symbolPool.removeAt(rng.nextInt(symbolPool.length));
+        });
+      if(tiles['font'].containsKey("force-symbols")){
+        tiles['font']["force-symbols"].forEach((k, v) {
+          newSymbols[k] = v;
+          });
+      }
+      tiles["symbols"] = newSymbols;
+    }
+
     void loadCSS() {
         StyleElement styleElement = new StyleElement();
         document.querySelector('panepond-board.player1').shadowRoot.append(styleElement);
@@ -78,7 +100,7 @@ class Config extends Observable {
 
         var symbolRules = {};
         tiles['symbols'].forEach((k, v) {
-          symbolRules[k] = {"colour": {}, "font-colour": {}};
+          symbolRules[k] = {"colour": {}, "font": {}};
         });
         tiles['colour'].forEach((k, v) {
           if(v is Map<String, num>){
@@ -92,14 +114,14 @@ class Config extends Observable {
           }
         });
 
-        tiles['font-colour'].forEach((k, v) {
+        tiles['font'].forEach((k, v) {
           if(v is Map<String, num>){
             v.forEach((symbol, value) {
-              symbolRules[symbol]['font-colour'][k] = value;
+              symbolRules[symbol]['font'][k] = value;
             });
           } else {
             for(var symbol in tiles['symbols'].keys) {
-              symbolRules[symbol]['font-colour'][k] = v;
+              symbolRules[symbol]['font'][k] = v;
             }
           }
         });
@@ -109,12 +131,12 @@ class Config extends Observable {
           var s = k=='0'?0:v["colour"]["saturation"];
           var l = v["colour"]["lightness"];
           var a = v["colour"]["alpha"];
-          var fh = v["font-colour"]["hue"];
-          var fs = v["font-colour"]["saturation"];
-          var fl = v["font-colour"]["lightness"];
-          var fa = v["font-colour"]["alpha"];
+          var fh = v["font"]["hue"];
+          var fs = v["font"]["saturation"];
+          var fl = v["font"]["lightness"];
+          var fa = v["font"]["alpha"];
           sheet.insertRule(
-            ".tile.symbol$k {"
+            ".tile.symbol.s$k {"
                 "background: linear-gradient("
                     "135deg,"
                     "hsla($h,$s%,${(k=='0')?l-10:l+10}%,$a) 0%,"
@@ -124,6 +146,11 @@ class Config extends Observable {
                 "color: hsla($fh, $fs%, $fl%, $fa);}"
             , sheet.cssRules.length);
         });
+
+        var ff = tiles['font']["family"];
+        String fontFamily = (ff != null)?"font-family:'$ff';": "";
+        sheet.insertRule(".tile.symbol {$fontFamily}", sheet.cssRules.length);
+        randomiseSymbols();
     }
 
     String export() {
