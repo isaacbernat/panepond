@@ -4,6 +4,7 @@ dependencies:
   polymer: '>=0.14.0 <0.15.0'
   core_elements: any
   browser: any
+  color: any
   range:
 transformers:
 - polymer:

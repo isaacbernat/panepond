@@ -128,7 +128,7 @@ class Config extends Observable {
           var h = v["colour"]["hue"];
           var s = k=='0'?0:v["colour"]["saturation"];
           var l = v["colour"]["lightness"];
-          var a = v["colour"]["alpha"];
+          var a = k=='0'?0.5:v["colour"]["alpha"];
           var fh = v["font"]["hue"];
           var fs = v["font"]["saturation"];
           var fl = v["font"]["lightness"];

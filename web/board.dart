@@ -4,9 +4,15 @@ import 'dart:math';
 import 'package:polymer/polymer.dart';
 import "package:range/range.dart";
 import 'config.dart';
-
+import 'package:color/color.dart';
 
 main() {
+  var rng = new Random();
+  var col = updateBgColour((new Color.hsl(rng.nextInt(360), 50, 25)).toRgbColor().toHexColor());
+  var colourSelector = document.querySelector('.bg');
+  colourSelector.value = "#$col";
+  colourSelector.onChange.listen((event) => updateBgHex(colourSelector.value));
+
   initPolymer().run(() {
     // Code that doesn't need to wait.
     Polymer.onReady.then((_) {
@@ -32,6 +38,42 @@ class States {
   static get values => [still, fall, swap, dying];
   final int value;
   const States._(this.value);
+}
+
+void updateBgHex(hex) => updateBgColour(new Color.hex(hex));
+
+Color updateBgColour(Color colour){
+    CssStyleSheet sheet = document.styleSheets[3];  //We want to override existing defaults
+    addAndReplaceCssRule(sheet, "header h1", "text-shadow: ${titleTextShadow(colour)};");
+    addAndReplaceCssRule(sheet, "body", "background: #$colour;");
+    return colour;
+}
+
+void addAndReplaceCssRule(sheet, selector, style) {  // Not efficient for batches
+  for(num i = sheet.cssRules.length -1; i > 0; i--) {  // reversed loop since we append rules at the end
+    if(sheet.rules[i].cssText.startsWith("$selector { ${style.split(':')[0]}")) {
+      sheet.removeRule(i);
+      break;  // assuming at most one instance of the same 'selector {attribute:'
+    }
+  }
+  sheet.addRule(selector, style, sheet.cssRules.length);
+}
+
+String titleTextShadow(color) {
+    HslColor colour = color.toHslColor();
+    num h = colour.h.round();
+    num s = (colour.s/3).round();
+    num l = min(80, max(colour.l, 35)).round();
+    return "hsl($h, $s%, $l%) 0px 1px 0px, "
+           "hsl($h, $s%, $l%) 0px 1px 0px, "
+           "hsl($h, $s%, $l%) 0px 2px 0px, "
+           "hsl($h, $s%, $l%) 0px 3px 0px, "
+           "hsl($h, $s%, $l%) 0px 4px 0px, "
+           "rgba(0, 0, 0, 0.2) 0px 5px 1px, "
+           "rgba(0, 0, 0, 0.3) 0px 0px 10px, "
+           "rgba(0, 0, 0, 0.4) 0px 3px 5px, "
+           "rgba(0, 0, 0, 0.5) 0px 6px 5px, "
+           "rgba(0, 0, 0, 0.6) 0px 10px 10px";
 }
 
 @CustomTag('panepond-board')
