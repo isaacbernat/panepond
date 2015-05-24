@@ -1,7 +1,291 @@
 <!DOCTYPE html><html lang="en"><head><script src="packages/web_components/platform.js"></script>
 <script src="packages/web_components/dart_support.js"></script>
-<meta charset="utf-8"><title>panepond</title><style>html{width:100%}body{width:100%;background:teal}
-</style></head><body><div hidden="">
+
+    <meta charset="utf-8">
+    <title>panepond</title>
+    <style>html{width:100%;margin-left:-0.55em}body{width:100%;font-family:"TeX Gyre Termes Regular",serif;color:rgba(255,255,255,0.75);text-align:center;background:teal}header p.pre{letter-spacing:0.1em;font-size:1.25em;margin:-0.1em 0 0 0.1em;text-transform:uppercase}header h1{font-size:3.5em;color:#fff;margin:-0.2em;font-weight:normal;font-family:"TeX Gyre Termes Bold",serif;text-transform:uppercase}header p.post{font-size:0.7em;letter-spacing:0.6em;margin:0 0 1em 0.6em}header p.deco{font-family:"Nymphette";line-height:0}header p.deco.top{font-size:6em;margin:0.2em 0.05em -0.35em 0;letter-spacing:-0.05em}header p.deco.bottom{font-size:4em;margin:0}.main{display:table;margin:0 auto}@font-face{font-family:"TeX Gyre Termes Bold";src:url(fonts/texgyretermes-bold-webfont.ttf) format("truetype")}@font-face{font-family:"TeX Gyre Termes Regular";src:url(fonts/texgyretermes-regular-webfont.ttf) format("truetype")}@font-face{font-family:"Nymphette";src:url(fonts/Nymphette-webfont.ttf) format("truetype")}@font-face{font-family:"Kalocsai";src:url(fonts/Kalocsai-Flowers-webfont.ttf) format("truetype")}
+/*# sourceMappingURL=index.css.map */
+</style>
+    
+  </head>
+  <body><div hidden=""><style shim-shadowdom="">
+/*******************************
+          Flex Layout
+*******************************/
+
+html /deep/ [layout][horizontal], html /deep/ [layout][vertical] {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+html /deep/ [layout][horizontal][inline], html /deep/ [layout][vertical][inline] {
+  display: -ms-inline-flexbox;
+  display: -webkit-inline-flex;
+  display: inline-flex;
+}
+
+html /deep/ [layout][horizontal] {
+  -ms-flex-direction: row;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+}
+
+html /deep/ [layout][horizontal][reverse] {
+  -ms-flex-direction: row-reverse;
+  -webkit-flex-direction: row-reverse;
+  flex-direction: row-reverse;
+}
+
+html /deep/ [layout][vertical] {
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+html /deep/ [layout][vertical][reverse] {
+  -ms-flex-direction: column-reverse;
+  -webkit-flex-direction: column-reverse;
+  flex-direction: column-reverse;
+}
+
+html /deep/ [layout][wrap] {
+  -ms-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+html /deep/ [layout][wrap-reverse] {
+  -ms-flex-wrap: wrap-reverse;
+  -webkit-flex-wrap: wrap-reverse;
+  flex-wrap: wrap-reverse;
+}
+
+html /deep/ [flex] {
+  -ms-flex: 1 1 0.000000001px;
+  -webkit-flex: 1;
+  flex: 1;
+  -webkit-flex-basis: 0.000000001px;
+  flex-basis: 0.000000001px;
+}
+
+html /deep/ [vertical][layout] > [flex][auto-vertical], html /deep/ [vertical][layout]::shadow [flex][auto-vertical] {
+  -ms-flex: 1 1 auto;
+  -webkit-flex-basis: auto;
+  flex-basis: auto;
+}
+
+html /deep/ [flex][auto] {
+  -ms-flex: 1 1 auto;
+  -webkit-flex-basis: auto;
+  flex-basis: auto;
+}
+
+html /deep/ [flex][none] {
+  -ms-flex: none;
+  -webkit-flex: none;
+  flex: none;
+}
+
+html /deep/ [flex][one] {
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
+
+html /deep/ [flex][two] {
+  -ms-flex: 2;
+  -webkit-flex: 2;
+  flex: 2;
+}
+
+html /deep/ [flex][three] {
+  -ms-flex: 3;
+  -webkit-flex: 3;
+  flex: 3;
+}
+
+html /deep/ [flex][four] {
+  -ms-flex: 4;
+  -webkit-flex: 4;
+  flex: 4;
+}
+
+html /deep/ [flex][five] {
+  -ms-flex: 5;
+  -webkit-flex: 5;
+  flex: 5;
+}
+
+html /deep/ [flex][six] {
+  -ms-flex: 6;
+  -webkit-flex: 6;
+  flex: 6;
+}
+
+html /deep/ [flex][seven] {
+  -ms-flex: 7;
+  -webkit-flex: 7;
+  flex: 7;
+}
+
+html /deep/ [flex][eight] {
+  -ms-flex: 8;
+  -webkit-flex: 8;
+  flex: 8;
+}
+
+html /deep/ [flex][nine] {
+  -ms-flex: 9;
+  -webkit-flex: 9;
+  flex: 9;
+}
+
+html /deep/ [flex][ten] {
+  -ms-flex: 10;
+  -webkit-flex: 10;
+  flex: 10;
+}
+
+html /deep/ [flex][eleven] {
+  -ms-flex: 11;
+  -webkit-flex: 11;
+  flex: 11;
+}
+
+html /deep/ [flex][twelve] {
+  -ms-flex: 12;
+  -webkit-flex: 12;
+  flex: 12;
+}
+
+/* alignment in cross axis */
+
+html /deep/ [layout][start] {
+  -ms-flex-align: start;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+}
+
+html /deep/ [layout][center], html /deep/ [layout][center-center] {
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+html /deep/ [layout][end] {
+  -ms-flex-align: end;
+  -webkit-align-items: flex-end;
+  align-items: flex-end;
+}
+
+/* alignment in main axis */
+
+html /deep/ [layout][start-justified] {
+  -ms-flex-pack: start;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+}
+
+html /deep/ [layout][center-justified], html /deep/ [layout][center-center] {
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+html /deep/ [layout][end-justified] {
+  -ms-flex-pack: end;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+}
+
+html /deep/ [layout][around-justified] {
+  -ms-flex-pack: distribute;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+}
+
+html /deep/ [layout][justified] {
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+}
+
+/* self alignment */
+
+html /deep/ [self-start] {
+  -ms-align-self: flex-start;
+  -webkit-align-self: flex-start;
+  align-self: flex-start;
+}
+
+html /deep/ [self-center] {
+  -ms-align-self: center;
+  -webkit-align-self: center;
+  align-self: center;
+}
+
+html /deep/ [self-end] {
+  -ms-align-self: flex-end;
+  -webkit-align-self: flex-end;
+  align-self: flex-end;
+}
+
+html /deep/ [self-stretch] {
+  -ms-align-self: stretch;
+  -webkit-align-self: stretch;
+  align-self: stretch;
+}
+
+/*******************************
+          Other Layout
+*******************************/
+
+html /deep/ [block] {
+  display: block;
+}
+
+/* ie support for hidden */
+html /deep/ [hidden] {
+  display: none !important;
+}
+
+html /deep/ [relative] {
+  position: relative;
+}
+
+html /deep/ [fit] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+body[fullbleed] {
+  margin: 0;
+  height: 100vh;
+}
+
+/*******************************
+            Other
+*******************************/
+
+html /deep/ [segment], html /deep/ segment {
+  display: block;
+  position: relative;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 1em 0.5em;
+  padding: 1em;
+  background-color: white;
+  -webkit-box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+  border-radius: 5px 5px 5px 5px;
+}
+
+</style>
 
 <script src="packages/polymer/src/js/polymer/polymer.js"></script>
 
@@ -10,6 +294,85 @@
 // script tag is necessary to work around a bug in Chrome 36.
 </script>
 
-<polymer-element name="panepond-board"><template><input type="button" value="toggle config" on-click="{{toggleConfig}}" class="update"><label>score: {{totalScore}}</label><div style="display:{{config.display}}" class="config"><div><p>Use the toggle button to hide and show configuration options.</p><span><label>tile size</label><input type="number" value="{{config.tileSize}}"></span><span><label>rand seed</label><input type="number" value="{{config.randomSeed}}"><input type="button" value="generate" on-click="{{generateRandomSeed}}" class="update"><input type="button" value="update" on-click="{{updateRandomSeed}}" class="update"></span><h4>Click button and press key to change controls</h4><input type="button" value="up" on-click="{{updateKeyUp}}" class="update"><input type="button" value="down" on-click="{{updateKeyDown}}" class="update"><input type="button" value="right" on-click="{{updateKeyRight}}" class="update"><input type="button" value="left" on-click="{{updateKeyLeft}}" class="update"><input type="button" value="action" on-click="{{updateKeyAction}}" class="update"><p>Type {{config.controls["0"]}} {{config.controls["1"]}} {{config.controls["2"]}} {{config.controls["3"]}} to move around. Press {{config.controls["4"]}} for action</p></div><div><p>For a more comprehensive configuration use the JSON export/import tool below and modify the values at your own pleasure.</p><textarea rows="15" cols="50" value="{{config.jsonDump}}"></textarea><input type="button" value="export" on-click="{{exportConfig}}" class="update"><input type="button" value="import" on-click="{{importConfig}}" class="update"></div></div><div style="font-size:{{config.tileSize}}px" class="board ti"><template repeat="{{col in columns | enumerate}}"><div class="col"><template repeat="{{tile in col.value | enumerate}}"><div pos="{{col.index}},{{tile.index}}" style="background:{{config.tiles['colours'][tile.value.type]}}" class="tile">{{config.tiles["symbols"][tile.value.type]}}</div></template></div></template></div><div style="margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px" class="board cu"><template repeat="{{col in columns | enumerate}}"><div class="col"><template repeat="{{tile in col.value | enumerate}}"><div class="tile {{(col.index >= cursor['x'] &amp;&amp; col.index < cursor['x'] + cursor['width']                          &amp;&amp; tile.index >= cursor['y'] &amp;&amp; tile.index < cursor['y'] + cursor['height'])? &quot;cursor&quot; : ''}}">&nbsp;</div></template></div></template></div><div style="margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px" class="board ef"><template repeat="{{col in columnEffects | enumerate}}"><div class="col"><template repeat="{{tile in col.value | enumerate}}"><div pos="{{col.index}},{{tile.index}}" class="tile">{{tile.value}}</div></template></div></template></div><style>.board{border:0}.col{float:left}.tile{width:1em;height:1em;line-height:1em;text-align:center;color:gray}.board.cu{float:left;z-index:10}.board.ef{float:left;z-index:10}.board.ef .tile{color:#fff}.cursor{outline:0.2em dashed #d3d3d3;outline-offset:-0.1em}.config{width:25em}.config div{margin-top:0.5em;border:1px dotted #001a1a}.config h4{margin-bottom:0}.config span{display:block}.config label{display:inline-block;min-width:4em}.config input{max-width:5em}
+<!-- unminified for debugging:
+<link rel="import" href="src/js/polymer/layout.html">
+<script src="src/js/polymer/polymer.concat.js"></script>
+-->
+
+<polymer-element name="panepond-board">
+  <template>
+    <div class="above-board">
+      <input type="button" value="toggle config" on-click="{{toggleConfig}}" class="update"><br>
+      <label>score: {{totalScore}}</label>
+    </div>
+    <div style="display:{{config.display}}" class="config">
+      <div>
+        <p>Use the toggle button to hide and show configuration options.</p><span>
+          <label>tile size</label>
+          <input type="number" value="{{config.tileSize}}"></span><span>
+          <label>rand seed</label>
+          <input type="number" value="{{config.randomSeed}}">
+          <input type="button" value="generate" on-click="{{generateRandomSeed}}" class="update">
+          <input type="button" value="update" on-click="{{updateRandomSeed}}" class="update"></span>
+        <h4>Click button and press key to change controls</h4>
+        <input type="button" value="up" on-click="{{updateKeyUp}}" class="update">
+        <input type="button" value="down" on-click="{{updateKeyDown}}" class="update">
+        <input type="button" value="right" on-click="{{updateKeyRight}}" class="update">
+        <input type="button" value="left" on-click="{{updateKeyLeft}}" class="update">
+        <input type="button" value="action" on-click="{{updateKeyAction}}" class="update">
+        <p>Type {{config.controls["0"]}} {{config.controls["1"]}} {{config.controls["2"]}} {{config.controls["3"]}} to move around. Press {{config.controls["4"]}} for action</p>
+      </div>
+      <div>
+        <p>For a more comprehensive configuration use the JSON export/import tool below and modify the values at your own pleasure.</p>
+        <textarea rows="15" cols="50" value="{{config.jsonDump}}"></textarea>
+        <input type="button" value="export" on-click="{{exportConfig}}" class="update">
+        <input type="button" value="import" on-click="{{importConfig}}" class="update">
+      </div>
+    </div>
+    <div style="font-size:{{config.tileSize}}px" class="board ti">
+      <template repeat="{{col in columns | enumerate}}">
+        <div class="col">
+          <template repeat="{{tile in col.value | enumerate}}">
+            <div pos="{{col.index}},{{tile.index}}" class="tile symbol s{{tile.value.type}}">{{config.tiles["symbols"][tile.value.type]}}</div>
+          </template>
+        </div>
+      </template>
+      <div style="margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px" class="board cu">
+        <template repeat="{{col in columns | enumerate}}">
+          <div class="col">
+            <template repeat="{{tile in col.value | enumerate}}">
+              <div class="tile {{(col.index >= cursor['x'] &amp;&amp; col.index < cursor['x'] + cursor['width']                            &amp;&amp; tile.index >= cursor['y'] &amp;&amp; tile.index < cursor['y'] + cursor['height'])? + 'cursor' : ''}}">&nbsp;</div>
+            </template>
+          </div>
+        </template>
+      </div>
+      <div style="margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px" class="board ef">
+        <template repeat="{{col in columnEffects | enumerate}}">
+          <div class="col">
+            <template repeat="{{tile in col.value | enumerate}}">
+              <div pos="{{col.index}},{{tile.index}}" class="tile">{{tile.value}}</div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </div>
+    <style>.board{border:0}.above-board{text-align:center}.col{float:left}.tile{width:1em;height:1em;line-height:1em;text-align:center}.board.cu{float:left;z-index:10}.board.ef{float:left;z-index:10}.board.ef .tile{color:rgba(255,255,255,0.75)}.config{width:25em}.config div{margin-top:0.5em;border:1px dotted rgba(255,255,255,0.25)}.config h4{margin-bottom:0}.config span{display:block}.config label{display:inline-block;min-width:4em}.config input{max-width:5em}textarea{color:rgba(255,255,255,0.65);background-color:rgba(0,0,0,0.5)}
 /*# sourceMappingURL=board.css.map */
-</style></template></polymer-element></div><h1>Welcome to Panepond(art) WIP</h1><panepond-board class="player1"></panepond-board><script src="index.html_bootstrap.dart.js" async=""></script></body></html>
+</style>
+  </template>
+</polymer-element>
+</div>
+    <header>
+      <p class="pre">Be welcome to</p>
+      <p class="deco top">u &nbsp; &nbsp; v</p>
+      <h1>Panepond</h1>
+      <p class="post">Panel de Pon with D(art)</p>
+      <p class="deco bottom">D                    C</p>
+    </header>
+    <div class="main">
+      <input type="color" value="#008080" class="bg">
+      <panepond-board class="player1"></panepond-board>
+    </div>
+    
+  
+<script src="index.html_bootstrap.dart.js" async=""></script></body></html>

@@ -1,42 +1,44 @@
 .board
-    /*width: 100%*/
-    border: 0
+  border: 0
+
+.above-board
+  text-align: center
 
 .col
-    float: left
+  float: left
 
 .tile
-    width: 1em
-    height: 1em
-    line-height: 1em
-    text-align: center
-    color: gray
+  width: 1em
+  height: 1em
+  line-height: 1em
+  text-align: center
 
 .board.cu
-    float: left
-    z-index: 10
+  float: left
+  z-index: 10
 
 .board.ef
-    float: left
-    z-index: 10
-    .tile
-        color: white
-
-.cursor
-    outline: 0.2em dashed lightgray
-    outline-offset: -0.1em
+  float: left
+  z-index: 10
+  .tile
+    color: hsla(0, 100%, 100%, 0.75)
 
 .config
-    width: 25em
-    div
-        margin-top: 0.5em
-        border: 1px dotted darken(teal, 20%)
-    h4
-        margin-bottom: 0
-    span
-        display: block
-    label
-        display: inline-block
-        min-width: 4em
-    input
-        max-width: 5em
+  width: 25em
+  div
+    margin-top: 0.5em
+    border: 1px dotted hsla(0,100%,100%,0.25)
+  h4
+    margin-bottom: 0
+  span
+    display: block
+  label
+    display: inline-block
+    min-width: 4em
+  input
+    max-width: 5em
+
+textarea
+  font-family:monospace
+  color: hsla(0, 0%, 100%, 0.65)
+  background-color: hsla(0, 0%, 0%, 0.5)

@@ -6,6 +6,13 @@ html(lang="en")
     link(rel="stylesheet" href="index.css")
     link(rel="import" href="board.html")
   body
-    h1 Welcome to Panepond(art) WIP
-    panepond-board.player1
+    header
+      p.pre Be welcome to
+      p.deco.top u &nbsp; &nbsp; v
+      h1 Panepond
+      p.post Panel de Pon with D(art)
+      p.deco.bottom D                    C
+    .main
+      input(type="color" value="#008080").bg
+      panepond-board.player1
     script(type="application/dart" src="board.dart")

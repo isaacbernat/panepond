@@ -1,10 +1,11 @@
-doctype html
 link(rel="import" href="packages/polymer/polymer.html")
 
 polymer-element(name="panepond-board")
   template
-    input.update(type='button', value="toggle config" on-click="{{toggleConfig}}")
-    label score: {{totalScore}}
+    .above-board
+      input.update(type='button', value="toggle config" on-click="{{toggleConfig}}")
+      br
+      label score: {{totalScore}}
 
     .config(style='display:{{config.display}}')
       div
@@ -35,19 +36,20 @@ polymer-element(name="panepond-board")
       template(repeat="{{col in columns | enumerate}}")
         .col
           template(repeat="{{tile in col.value | enumerate}}")
-            .tile(pos="{{col.index}},{{tile.index}}" style="background:{{config.tiles['colours'][tile.value.type]}}") {{config.tiles["symbols"][tile.value.type]}}
+            .tile(pos="{{col.index}},{{tile.index}}" class="symbol s{{tile.value.type}}") {{config.tiles["symbols"][tile.value.type]}}
 
-    .board.cu(style='margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px')
-      template(repeat="{{col in columns | enumerate}}")
-        .col
+      .board.cu(style='margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px')
+        template(repeat="{{col in columns | enumerate}}")
+          .col
+              template(repeat="{{tile in col.value | enumerate}}")
+                .tile(class="{{(col.index >= cursor['x'] && col.index < cursor['x'] + cursor['width']\
+                            && tile.index >= cursor['y'] && tile.index < cursor['y'] + cursor['height'])? + 'cursor' : ''}}") &nbsp;
+
+      .board.ef(style='margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px')
+        template(repeat="{{col in columnEffects | enumerate}}")
+          .col
             template(repeat="{{tile in col.value | enumerate}}")
-              .tile(class="{{(col.index >= cursor['x'] && col.index < cursor['x'] + cursor['width']\
-                          && tile.index >= cursor['y'] && tile.index < cursor['y'] + cursor['height'])? \"cursor\" : ''}}") &nbsp;
-    .board.ef(style='margin-left:{{leftMarginOffset}}em; font-size:{{config.tileSize}}px')
-      template(repeat="{{col in columnEffects | enumerate}}")
-        .col
-          template(repeat="{{tile in col.value | enumerate}}")
-            .tile(pos="{{col.index}},{{tile.index}}") {{tile.value}}
+              .tile(pos="{{col.index}},{{tile.index}}") {{tile.value}}
 
     link(rel="stylesheet" href="board.css")
 script(type="application/dart" src="board.dart")

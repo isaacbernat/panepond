@@ -1,5 +1,59 @@
 html
-    width: 100%
+  width: 100%
+  margin-left: -0.55em
+
 body
-    width: 100%
-    background: teal
+  width: 100%
+  font-family: 'TeX Gyre Termes Regular', serif
+  color: hsla(0,100%,100%,0.75)
+  text-align: center
+  background: teal
+
+header
+  p.pre
+    letter-spacing: 0.1em
+    font-size: 1.25em
+    margin: -0.1em 0 0 0.1em
+    text-transform: uppercase
+  h1
+    font-size: 3.5em
+    color: white
+    margin: -0.2em
+    font-weight: normal
+    font-family: 'TeX Gyre Termes Bold', serif
+    text-transform: uppercase
+  p.post
+    font-size: 0.7em
+    letter-spacing: 0.6em
+    margin: 0 0 1em 0.6em
+
+  p.deco
+    font-family: 'Nymphette'
+    line-height: 0
+  p.deco.top
+    font-size: 6em
+    margin: 0.2em 0.05em -0.35em 0
+    letter-spacing: -0.05em
+  p.deco.bottom
+    font-size: 4em
+    margin: 0
+
+.main
+  display: table
+  margin: 0 auto
+
+@font-face
+  font-family: 'TeX Gyre Termes Bold'
+  src: url('./fonts/texgyretermes-bold-webfont.ttf') format('truetype')
+
+@font-face
+  font-family: 'TeX Gyre Termes Regular'
+  src: url('./fonts/texgyretermes-regular-webfont.ttf') format('truetype')
+
+@font-face
+  font-family: 'Nymphette'
+  src: url('./fonts/Nymphette-webfont.ttf') format('truetype')
+
+@font-face
+  font-family: 'Kalocsai'
+  src: url('./fonts/Kalocsai-Flowers-webfont.ttf') format('truetype')
