@@ -36,7 +36,8 @@ class Config extends Observable {
         "hue": {"0": 0, "1": 0, "2": 60, "3": 120, "4": 180, "5": 240, "6": 300},
         "saturation": 50,
         "lightness": 50,
-        "alpha": 1
+        "alpha": 1,
+        "randomise-hue": true,
       },
       "font": {
         "hue": 0,
@@ -123,6 +124,16 @@ class Config extends Observable {
             }
           }
         });
+
+        if(tiles['colour'].containsKey("randomise-hue")) {
+          var rng = new Random();
+          num currentHue = rng.nextInt(360);
+          num increment = (360 / (symbolRules.length -1)).round();  //ignore the empty tile
+          symbolRules.forEach((k, v) {
+            symbolRules[k]["colour"]["hue"] = currentHue%360;
+            currentHue += increment;
+          });
+        }
 
         symbolRules.forEach((k, v) {
           var h = v["colour"]["hue"];
