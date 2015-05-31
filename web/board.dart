@@ -189,8 +189,8 @@ class Board extends PolymerElement {
     t2.type = tmpType;
     t2.state = States.swap;
     if(config.effects["swap_effects"]){
-      this.columnEffects[t1.x][t1.y] = "⇥";
-      this.columnEffects[t2.x][t2.y] = "⇤";
+      this.columnEffects[t1.x][t1.y] = ">";
+      this.columnEffects[t2.x][t2.y] = "<";
     }
   new Future.delayed(config.delayDurations["swap"], () => [[pos1["x"], pos1["y"]], [pos2["x"], pos2["y"]]])
       .then((coordinatesList) => clearEffects(coordinatesList));
@@ -218,13 +218,13 @@ class Board extends PolymerElement {
     List <Map <String, num>> tilePositions = matches.expand((i) => i).toList(); // flatten
     if (multiplier == 1) { // the first match treats all tilePositions as the same "combo"
       accumScore = config.rules["scores"][tilePositions.length.toString()];  // TODO it'd be nicer with nums
-      scoreEffects(tilePositions, accumScore, multiplier).then((tile) => clearEffects([tile]));
+      scoreEffects(tilePositions, accumScore, multiplier).then((tiles) => clearEffects(tiles));
       multiplier += config.rules["multiplier_increment"];
     } else { // in a cumulative combo, combinations score on their own (and add to the multiplier)
       for (var m in matches) {
         num comboScore = config.rules["scores"][m.length.toString()];
         accumScore += comboScore;
-        scoreEffects(m, comboScore, multiplier).then((tile) => clearEffects([tile]));
+        scoreEffects(m, comboScore, multiplier).then((tiles) => clearEffects(tiles));
         multiplier += config.rules["multiplier_increment"];
       }
     }
@@ -312,27 +312,22 @@ class Board extends PolymerElement {
 
   Future scoreEffects(List <Map <String, num>> tiles, num comboScore, num multiplier) {
     if(!config.effects["score_effects"] || (comboScore == 0 && multiplier == 1)){
-      return new Future(() => [-1, -1]);
+      return new Future(() => [[-1, -1]]);
     }
-    num maxX = 0, minX = 9999, maxY = 0, minY = 9999; //TODO: non-magic numbers
-    for(var t in tiles){
-      maxX = max(maxX, t["x"]);
-      minX = min(minX, t["x"]);
-      maxY = max(maxY, t["y"]);
-      minY = min(minY, t["y"]);
-    }
-    if ((maxY == minY) || (maxX == minX)) { //TODO: better "centering" algorithm
-      minX = ((minX+maxX)/2).floor();
-      minY = ((minY+maxY)/2).floor();
-    }
+    List<List<num>> coordinatesToClean = [];
+    var centerTile = tiles[(tiles.length/2).floor()]; // TODO: use a centering algorithm
     String effect;
     if (multiplier > 1){
       effect = "x$multiplier";
     } else {
       effect = "+$comboScore";
     }
-    this.columnEffects[minX][minY] = effect;
-    return new Future.delayed(config.delayDurations["score_effects"], () => [minX, minY]);
+    for(var t in tiles){
+      this.columnEffects[t["x"]][t["y"]] = "*";
+      coordinatesToClean.add([t["x"], t["y"]]);
+    }
+    this.columnEffects[centerTile["x"]][centerTile["y"]] = effect;
+    return new Future.delayed(config.delayDurations["score_effects"], () => coordinatesToClean);
   }
 
   void clearEffects(List<List<num>> coordinatesList) {
