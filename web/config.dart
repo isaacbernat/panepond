@@ -36,8 +36,13 @@ class Config extends Observable {
         "hue": {"0": 0, "1": 0, "2": 60, "3": 120, "4": 180, "5": 240, "6": 300},
         "saturation": 50,
         "lightness": 50,
-        "alpha": 1,
+        "alpha": 0.75,
         "randomise-hue": true,
+      },
+      "mode": {
+        "type": "tetris",
+        "variant": 3,
+        "override_colour": false,
       },
       "font": {
         "hue": 0,
@@ -51,7 +56,8 @@ class Config extends Observable {
       "cursor": {
         "background-color": "hsla(0, 0%, 100%, 0.5)",
         "outline": "0.2em dashed lightgray",
-        "outline-offset": "-0.1em"}
+        "outline-offset": "-0.1em"
+      }
     };
     Map effects = {
       "score_effects": true,
@@ -69,15 +75,18 @@ class Config extends Observable {
 
     Config(w, h, ts) : width = w, height = h, tileSize = ts;
 
-    void randomiseSymbols(){
+    void randomiseSymbols(bool noSymbols){
       if(tiles['font']["randomise-symbols"] == null) {
         return;
       }
       var rng = new Random();
       List<String> symbolPool = tiles['font']["randomise-symbols"].split(''); //must be at least as long as symbols
+      if (noSymbols) {
+        symbolPool = [];
+      }
       Map <String, String> newSymbols = {};
       tiles["symbols"].forEach((k,v){
-        newSymbols[k] = symbolPool.removeAt(rng.nextInt(symbolPool.length));
+        newSymbols[k] = symbolPool.length >0?symbolPool.removeAt(rng.nextInt(symbolPool.length)):" ";
         });
       if(tiles['font'].containsKey("force-symbols")){
         tiles['font']["force-symbols"].forEach((k, v) {
@@ -135,6 +144,7 @@ class Config extends Observable {
           });
         }
 
+        bool noSymbols = false;
         symbolRules.forEach((k, v) {
           var h = v["colour"]["hue"];
           var s = k=='0'?0:v["colour"]["saturation"];
@@ -144,22 +154,35 @@ class Config extends Observable {
           var fs = v["font"]["saturation"];
           var fl = v["font"]["lightness"];
           var fa = v["font"]["alpha"];
-          sheet.insertRule(
-            ".tile.symbol.s$k {"
-                "background: linear-gradient("
-                    "135deg,"
-                    "hsla($h,$s%,${(k=='0')?l-10:l+10}%,$a) 0%,"
-                    "hsla($h,$s%,${(k=='0')?l-10:l}%,$a) 50%,"
-                    "hsla($h,$s%,${(k=='0')?l-10:l-10}%,$a) 51%,"
-                    "hsla($h,$s%,${(k=='0')?l-10:l-2}%,$a) 100%);"
-                "color: hsla($fh, $fs%, $fl%, $fa);}"
-            , sheet.cssRules.length);
+
+          String cssRule = ".tile.symbol.s$k {";
+          if (tiles['mode']["type"] == "gameboy" || tiles['mode']["type"] == "tetris") {
+            noSymbols = true;  // this shouldn't be inside a loop... I know
+            num variant = tiles['mode']["variant"];
+            a = tiles['mode']["override_colour"]?0:a;
+            cssRule += ""
+                "background:"
+                  "linear-gradient(to right, hsla($h,$s%,$l%,$a), hsla($h,$s%,$l%,$a)),"
+                  "url('./img/tetris_tiles.png') ${int.parse(k) * -1.25}em ${variant * -1.25}em;"
+                "image-rendering: pixelated;"
+                "background-size: 5125%;}";
+          } else {
+            cssRule += ""
+              "background: linear-gradient("
+                 "135deg,"
+                 "hsla($h,$s%,${(k=='0')?l-10:l+10}%,$a) 0%,"
+                 "hsla($h,$s%,${(k=='0')?l-10:l}%,$a) 50%,"
+                 "hsla($h,$s%,${(k=='0')?l-10:l-10}%,$a) 51%,"
+                 "hsla($h,$s%,${(k=='0')?l-10:l-2}%,$a) 100%);"
+                 "color: hsla($fh, $fs%, $fl%, $fa);}";
+          }
+          sheet.insertRule(cssRule, sheet.cssRules.length);
         });
 
         var ff = tiles['font']["family"];
         String fontFamily = (ff != null)?"font-family:'$ff';": "";
         sheet.insertRule(".tile.symbol {$fontFamily}", sheet.cssRules.length);
-        randomiseSymbols();
+        randomiseSymbols(noSymbols);
     }
 
     String export() {
