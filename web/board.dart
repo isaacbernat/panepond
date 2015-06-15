@@ -120,6 +120,10 @@ class Board extends PolymerElement {
   void updateKeyAction() => updateKey(Controls.action);
 
   void init() {
+    if (Uri.base.queryParameters["mode"] == "normal"){
+      config.tiles["mode"]["type"] = "normal";
+      config.tiles["colour"]["alpha"] = 1;
+    }
     config.loadCSS();
     totalScore = 0;
     var numSymbols = config.tiles["symbols"].length -1;
