@@ -1,10 +1,16 @@
 panepond: Panel de Pon with D(art)
 ==================================
-Features
---------
-ATM panepond is still WIP, but it is aimed to become a *[panepon](http://en.wikipedia.org/wiki/Yoshi%27s_Panepon)/[panel de pon](http://en.wikipedia.org/wiki/Tetris_Attack#Panel_de_Pon)/[tetris attack](http://en.wikipedia.org/wiki/Tetris_Attack)/[crack attack](http://www.aluminumangel.org/attack/)* clone with major improvements.
+panepond aim is to become a *[panepon](http://en.wikipedia.org/wiki/Yoshi%27s_Panepon)/[panel de pon](http://en.wikipedia.org/wiki/Tetris_Attack#Panel_de_Pon)/[tetris attack](http://en.wikipedia.org/wiki/Tetris_Attack)/[crack attack](http://www.aluminumangel.org/attack/)* clone with major improvements. The development is stalled ATM, but there is a [WIP version live](http://isaacbernat.github.io/panepond/) you may try. It supports [different flavoured themes](http://isaacbernat.github.io/panepond/?mode=normal).
 
-For a semi-detailed list check [version section](#versions)
+<div style="text-align:center">
+<a href="http://isaacbernat.github.io/panepond/">
+<img src="https://github.com/isaacbernat/panepond/blob/master/docs/8-bit-theme.png?raw=true" alt="Gameplay screenshot showcasing 8-bit theme" width="411px" height="671px">
+</a>
+<a href="http://isaacbernat.github.io/panepond/?mode=normal">
+<img src="https://github.com/isaacbernat/panepond/blob/master/docs/flower-theme.png?raw=true" alt="Gameplay screenshot showcasing flower theme" width="452px" height="692px"></a>
+</div>
+
+For a semi-detailed list of features check [version section](#versions)
 
 Run this
 --------
